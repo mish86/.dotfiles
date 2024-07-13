@@ -22,8 +22,8 @@ source "$HOME/.config/zsh/bindings.sh"
 source "$HOME/.config/yazi/yazi_scripts.sh"
 
 # https://github.com/jimeh/tmuxifier
-export PATH="$HOME/.config/tmuxifier/bin:$PATH"
-[[ tmuxifier ]] && eval "$(tmuxifier init -)"
+# export PATH="$HOME/.config/tmuxifier/bin:$PATH"
+# [[ tmuxifier ]] && eval "$(tmuxifier init -)"
 
 source "$HOME/.config/zsh/completion.sh"
 # iterm2 integrations (e.g. for auto-marks)

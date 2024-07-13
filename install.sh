@@ -13,6 +13,9 @@ brew install stow
 # Terminal #
 # -------- #
 
+# https://alacritty.org/
+brew install alacritty
+
 # system information tool
 # https://github.com/dylanaraps/neofetch
 brew install neofetch
@@ -50,7 +53,7 @@ brew install eza
 brew install fzf
 # bash and zsh key bindings for Git objects, powered by fzf
 # https://github.com/junegunn/fzf-git.sh
-git clone https://github.com/junegunn/fzf-git.sh.git "$HOME/dotfiles/fzf-git"
+git clone https://github.com/junegunn/fzf-git.sh.git "$HOME/.dotfiles/fzf-git"
 
 # ripgrep recursively searches directories for a regex pattern while respecting your gitignore
 # https://github.com/BurntSushi/ripgrep?tab=readme-ov-file#installation
@@ -125,11 +128,6 @@ brew install bind
 # select default applications for document types
 # https://github.com/moretension/duti
 brew install duti
-# map extensions to vscode
-# https://stackoverflow.com/questions/43665346/can-somebody-explain-how-to-make-vscode-the-default-editor-on-osx/43665710#43665710
-curl "https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml" |
-  yq -r "to_entries | (map(.value.extensions) | flatten) - [null] | unique | .[]" |
-  xargs -L 1 -I "{}" duti -s com.microsoft.VSCode {} all
 
 # macOS system monitor in your menu bar
 # https://github.com/exelban/stats
