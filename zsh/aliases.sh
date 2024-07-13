@@ -95,7 +95,3 @@ alias k8s='f() {
   namespace=$(kubectl get ns --no-headers -o custom-columns=":metadata.name" | gum filter) || return 130
   kubectl --context $context --namespace $namespace "$@"
 }; f'
-
-# dotfiles
-# https://gist.github.com/ennanco/d1c6a228f5aac23a3af6592135f0f8ae
-alias dotfiles="git --git-dir=$DOTFILES --work-tree=$HOME"
