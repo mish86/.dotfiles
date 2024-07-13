@@ -1,0 +1,19 @@
+# Comments and blank lines are allowed.
+
+\.git
+\.vscode
+\.github
+\.gitignore
+\.gitmodules
+\.DS_Store
+
+README.*
+LICENSE.*
+COPYING.*
+CHANGELOG.*
+FUNDING.*
+
+src
+assets
+scripts
+
