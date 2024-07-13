@@ -29,13 +29,9 @@ brew install zsh-autosuggestions
 # terminal multiplexer
 brew install tmux
 # install tmux plugins
-# no need to stow
-git clone https://github.com/tmux-plugins/tpm "$HOME/.config/tmux/plugins/tpm"
-# load config
-tmux source "$HOME/.config/tmux/tmux.conf"
+git clone https://github.com/tmux-plugins/tpm "$HOME/.dotfiles/tmux/plugins/tpm"
 # tmuxifier
-# no need to stow
-git clone https://github.com/jimeh/tmuxifier.git "$HOME/.config/tmuxifier"
+# git clone https://github.com/jimeh/tmuxifier.git "$HOME/.config/tmuxifier"
 
 # text editor
 # https://neovim.io/
@@ -66,32 +62,6 @@ brew install fd
 # A cat(1) clone with wings.
 # https://github.com/sharkdp/bat?tab=readme-ov-file#installation
 brew install bat
-
-# https://dandavison.github.io/delta/
-brew install git-delta
-cat <<EOF >>"$HOME/.gitconfig"
-[core]
-  autocrlf = input
-  editor = nvim
-  pager = delta
-
-[interactive]
-  diffFilter = delta --color-only
-
-[delta]
-  navigate = true    # use n and N to move between diff sections
-  side-by-side = true
-
-    # delta detects terminal colors automatically; set one of these to disable auto-detection
-    # dark = true
-    # light = true
-
-[merge]
-  conflictstyle = diff3
-
-[diff]
-  colorMoved = default
-EOF
 
 # tool for shell scripts
 # https://github.com/charmbracelet/gum
@@ -124,7 +94,11 @@ brew install yq
 # GIT #
 # --- #
 
+# https://dandavison.github.io/delta/
+brew install git-delta
+# https://github.com/jesseduffield/lazygit
 brew install lazygit
+# https://pre-commit.com/
 brew install pre-commit
 
 # ------ #
@@ -174,29 +148,3 @@ git clone https://github.com/catppuccin/bat.git "$HOME/.dotfiles/catppuccin/bat"
 git clone https://github.com/catppuccin/lazygit.git "$HOME/.dotfiles/catppuccin/lazygit"
 git clone https://github.com/yazi-rs/flavors.git "$HOME/.dotfiles/yazi/flavors"
 git clone https://github.com/yazi-rs/plugins.git "$HOME/.dotfiles/yazi/plugins"
-
-# ---- #
-# stow #
-# ---- #
-# cd "$HOME/dotfiles"
-# catppuccin goes first
-# mkdir -p "$HOME/.config/catppuccin"
-# stow catppuccin -t "$HOME/.config/catppuccin" --adopt -vvv
-# mkdir -p "$HOME/.config/alacritty"
-# stow alacritty -t "$HOME/.config/alacritty" --adopt -vvv
-# mkdir -p "$HOME/.config/bat"
-# stow bat -t "$HOME/.config/bat" --adopt -vvv
-# mkdir -p "$HOME/.config/fzf-git"
-# stow fzf-git -t "$HOME/.config/fzf-git" --adopt
-# mkdir -p "$HOME/.config/lazygit"
-# stow lazygit -t "$HOME/.config/lazygit" --adopt
-# mkdir -p "$HOME/.config/nvim"
-# stow nvim -t "$HOME/.config/nvim" --adopt
-# mkdir -p "$HOME/.config/tmux"
-# stow tmux -t "$HOME/.config/tmux" --adopt
-# mkdir -p "$HOME/.config/yazi"
-# stow yazi -t "$HOME/.config/yazi" --adopt
-# mkdir -p "$HOME/.config/zsh"
-# stow zsh -t "$HOME/.config/zsh" --adopt
-# .zshrc
-# stow home -t $HOME --adopt -vvv
