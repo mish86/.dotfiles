@@ -96,6 +96,7 @@ bindings = [
   # ⌥ + ⇧ + d adds a pane below (splits window horizontally)
   { key = "D",  mods = "Option|Shift", chars = "\u0020-" },
   # ⌘ + ⌥ + arrows are for directional navigation around the nvim panes
+  { key = "W",  mods = "Option", chars = "\u0020\u0062d" },
   # emulates ^ + hjkl
   # NOTE "$HOME/.config/nvim/lua/config/keymaps.lua"
   { key = "Down", mods = "Command|Option", chars = "\u000a" },
