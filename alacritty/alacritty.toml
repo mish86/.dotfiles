@@ -10,7 +10,7 @@ program = "/bin/zsh"
 args = [
   "-l",
   "-c",
-  "source ~/.zshrc; ftmux",
+  "source ~/.zshrc; cd ~/Downloads; ftmux",
 ]
 
 [window]
