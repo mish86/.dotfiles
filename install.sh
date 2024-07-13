@@ -140,7 +140,7 @@ brew install stats
 brew install font-hack-nerd-font
 brew install font-meslo-lg-nerd-font
 # catppuccin
-# for stow
+git clone https://github.com/catppuccin/alacritty.git "$HOME/.dotfiles/catppuccin/alacritty"
 git clone https://github.com/catppuccin/iterm.git "$HOME/.dotfiles/catppuccin/iterm"
 git clone https://github.com/catppuccin/bat.git "$HOME/.dotfiles/catppuccin/bat"
 git clone https://github.com/catppuccin/lazygit.git "$HOME/.dotfiles/catppuccin/lazygit"

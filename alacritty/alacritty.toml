@@ -1,5 +1,5 @@
 import = [
-  "$HOME/.config/catppuccin/alacritty/catppuccin-mocha.toml"
+  "~/.config/catppuccin/alacritty/catppuccin-mocha.toml"
 ]
 
 [env]
@@ -27,7 +27,8 @@ blur = true
 option_as_alt = "Both"
 
 [font]
-normal.family = "MesloLGS Nerd Font"
+# normal.family = "MesloLGS Nerd Font"
+normal.family = "Hack Nerd Font"
 size = 16
 
 [[hints.enabled]]
@@ -41,8 +42,9 @@ regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:
 
 [keyboard]
 bindings = [
-  # tmux
-  # NOTE prefix key is C-a "$HOME/.config/tmux/tmux.conf"
+  # NOTE: tmux
+  # NOTE: prefix key is C-a "$HOME/.config/tmux/tmux.conf"
+  #
   # https://www.danielcorin.com/til/alacritty/rebuilding-my-iterm-setup-in-alacritty/
   # ⌘ + enter puts window in macOS full screen
   { key = "Enter", mods = "Command", action = "ToggleFullscreen"},
@@ -90,7 +92,8 @@ bindings = [
   # NOTE "$HOME/.config/tmux/tmux.conf"
   { key = "K", mods = "Command", chars = "\u0001\u004b" },
 
-  # nvim
+  # NOTE: nvim
+  #
   # ⌥ + d adds a pane to the right (splits window vertically)
   { key = "D",  mods = "Option", chars = "\u0020|" },
   # ⌥ + ⇧ + d adds a pane below (splits window horizontally)
@@ -105,6 +108,8 @@ bindings = [
   { key = "Right", mods = "Command|Option", chars = "\u000c" },
   # ^ + arrows are for resizing of the nvim panes
   # NOTE see default nvim bindings
+  # NOTE: mission control shorcuts should be turned off
+  #
   # ⌥ + Tab + Shift for navigate to next and previous buffer
   { key = "Tab", mods = "Option|Shift", chars = "\u0048" },
   { key = "Tab", mods = "Option", chars = "\u004c" },
