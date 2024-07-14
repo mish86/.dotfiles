@@ -8,3 +8,13 @@ vim.keymap.set("n", "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft, { desc = "tmux 
 vim.keymap.set("n", "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown, { desc = "tmux Navigate Down" })
 vim.keymap.set("n", "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp, { desc = "tmux Navigate Up" })
 vim.keymap.set("n", "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight, { desc = "tmux Navigate Right" })
+
+local cmp = require("cmp")
+cmp.setup({
+  completion = {
+    autocomplete = false,
+  },
+  mapping = {
+    ["<C-Space>"] = cmp.mapping.complete(),
+  },
+})
