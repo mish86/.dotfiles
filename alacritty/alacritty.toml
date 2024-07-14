@@ -43,7 +43,7 @@ regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:
 [keyboard]
 bindings = [
   # NOTE: tmux
-  # NOTE: prefix key is C-a "$HOME/.config/tmux/tmux.conf"
+  # NOTE: prefix key is C-b "$HOME/.config/tmux/tmux.conf"
   #
   # https://www.danielcorin.com/til/alacritty/rebuilding-my-iterm-setup-in-alacritty/
   # ⌘ + enter puts window in macOS full screen
@@ -51,46 +51,46 @@ bindings = [
   # opt + right and left jump between words
   # NOTE "$HOME/.config/zsh/bindings.sh"
   # ⌘ + d adds a pane to the right (splits window vertically)
-  { key = "D",  mods = "Command", chars = "\u0001%" },
+  { key = "D",  mods = "Command", chars = "\u0002%" },
   # ⌘ + ⇧ + d adds a pane below (splits window horizontally)
-  { key = "D",  mods = "Command|Shift", chars = "\u0001\"" },
+  { key = "D",  mods = "Command|Shift", chars = "\u0002\"" },
   # ⌘ + w prompts you to close the pane, "y" to confirm
-  { key = "W",  mods = "Command", chars = "\u0001x" },
-  { key = "T", mods = "Command", chars = "\u0001\u0063" },
+  { key = "W",  mods = "Command", chars = "\u0002x" },
+  { key = "T", mods = "Command", chars = "\u0002\u0063" },
   # ⌘ + arrows are for directional navigation around the panes
-  { key = "Down", mods = "Command", chars = "\u0001\u001b[B" },
-  { key = "Up", mods = "Command", chars = "\u0001\u001b[A" },
-  { key = "Left", mods = "Command", chars = "\u0001\u001b[D" },
-  { key = "Right", mods = "Command", chars = "\u0001\u001b[C" },
+  { key = "Down", mods = "Command", chars = "\u0002\u001b[B" },
+  { key = "Up", mods = "Command", chars = "\u0002\u001b[A" },
+  { key = "Left", mods = "Command", chars = "\u0002\u001b[D" },
+  { key = "Right", mods = "Command", chars = "\u0002\u001b[C" },
   # ⌘ + ^ + arrows are for directional resizing of the panes
-  { key = "Down", mods = "Command|Control", chars = "\u0001\u001b[1;5B" },
-  { key = "Up", mods = "Command|Control", chars = "\u0001\u001b[1;5A" },
-  { key = "Left", mods = "Command|Control", chars = "\u0001\u001b[1;5D" },
-  { key = "Right", mods = "Command|Control", chars = "\u0001\u001b[1;5C" },
+  { key = "Down", mods = "Command|Control", chars = "\u0002\u001b[1;5B" },
+  { key = "Up", mods = "Command|Control", chars = "\u0002\u001b[1;5A" },
+  { key = "Left", mods = "Command|Control", chars = "\u0002\u001b[1;5D" },
+  { key = "Right", mods = "Command|Control", chars = "\u0002\u001b[1;5C" },
   # ⌘ + ⇧ + enter for zoom pane
-  { key = "Enter", mods = "Command|Shift", chars = "\u0001\u007a" },
+  { key = "Enter", mods = "Command|Shift", chars = "\u0002\u007a" },
   # ⌃ + Tab + Shift for navigate to next and previous window
-  { key = "Tab", mods = "Control|Shift", chars = "\u0001\u0070" },
-  { key = "Tab", mods = "Control", chars = "\u0001\u006e" },
+  { key = "Tab", mods = "Control|Shift", chars = "\u0002\u0070" },
+  { key = "Tab", mods = "Control", chars = "\u0002\u006e" },
   # ⌃ + [] for swap to next and previous window
-  { key = "[", mods = "Control", chars = "\u0001\u005b" },
-  { key = "]", mods = "Control", chars = "\u0001\u005d" },
+  { key = "[", mods = "Control", chars = "\u0002\u005b" },
+  { key = "]", mods = "Control", chars = "\u0002\u005d" },
   # ⌃ + 0..9 for navigate to window by number
-  { key = "1", mods = "Control", chars = "\u0001\u0031" },
-  { key = "2", mods = "Control", chars = "\u0001\u0032" },
-  { key = "3", mods = "Control", chars = "\u0001\u0033" },
-  { key = "4", mods = "Control", chars = "\u0001\u0034" },
-  { key = "5", mods = "Control", chars = "\u0001\u0035" },
-  { key = "6", mods = "Control", chars = "\u0001\u0036" },
-  { key = "7", mods = "Control", chars = "\u0001\u0037" },
-  { key = "8", mods = "Control", chars = "\u0001\u0038" },
-  { key = "9", mods = "Control", chars = "\u0001\u0039" },
+  { key = "1", mods = "Control", chars = "\u0002\u0031" },
+  { key = "2", mods = "Control", chars = "\u0002\u0032" },
+  { key = "3", mods = "Control", chars = "\u0002\u0033" },
+  { key = "4", mods = "Control", chars = "\u0002\u0034" },
+  { key = "5", mods = "Control", chars = "\u0002\u0035" },
+  { key = "6", mods = "Control", chars = "\u0002\u0036" },
+  { key = "7", mods = "Control", chars = "\u0002\u0037" },
+  { key = "8", mods = "Control", chars = "\u0002\u0038" },
+  { key = "9", mods = "Control", chars = "\u0002\u0039" },
   # ⌘ + Tab navigate to last window
   # NOTE "$HOME/.config/tmux/tmux.conf"
-  # { key = "Tab", mods = "Control", chars = "\u0001\u0009" },
+  # { key = "Tab", mods = "Control", chars = "\u0002\u0009" },
   # clear pane screen and scroll history
   # NOTE "$HOME/.config/tmux/tmux.conf"
-  { key = "K", mods = "Command", chars = "\u0001\u004b" },
+  { key = "K", mods = "Command", chars = "\u0002\u004b" },
 
   # NOTE: nvim
   #
