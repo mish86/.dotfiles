@@ -78,3 +78,12 @@ ftmux() {
     fi
   fi
 }
+
+ctx() {
+  local context="$(kubectl config get-contexts -o name | fzf)"
+  if [[ -n "$context" ]]; then
+    kubectl config use-context "$context"
+  else
+    :
+  fi
+}

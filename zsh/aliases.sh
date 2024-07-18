@@ -80,18 +80,11 @@ alias dif="git diff --no-index" # Diff two files even if not in git repo! Can ad
 # | tmux |
 # +------+
 
-alias tmuxk='tmux kill-session -t'
-alias tmuxa='tmux attach -t'
-alias tmuxl='tmux list-sessions'
+# alias tmuxk='tmux kill-session -t'
+# alias tmuxa='tmux attach -t'
+# alias tmuxl='tmux list-sessions'
 
-# +---------+
-# | kubectl |
-# +---------+
-
-alias ctx='f() { [ "$1" ] && kubectl config use-context $1 || kubectl config get-contexts -o name | gum filter | xargs kubectl config use-context; }; f'
-alias ns='f() { [ "$1" ] && kubectl config set-context --current --namespace $1 || kubectl get ns  --no-headers -o custom-columns=":metadata.name" | gum filter | xargs kubectl config set-context --current --namespace; kubectl config view --minify | grep namespace | cut -d" " -f6 }; f'
-alias k8s='f() {
-  context=$(kubectl config get-contexts -o name | gum filter) || return 130
-  namespace=$(kubectl get ns --no-headers -o custom-columns=":metadata.name" | gum filter) || return 130
-  kubectl --context $context --namespace $namespace "$@"
-}; f'
+if [[ fzf ]]; then
+  alias fctx='kubectl config get-contexts -o name | fzf'
+  alias fkubectl='kubectl --context="$(fctx)"'
+fi
