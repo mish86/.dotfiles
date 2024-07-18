@@ -42,6 +42,8 @@ regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:
 
 [keyboard]
 bindings = [
+  { key = "Home", chars = "\u0001" },
+  { key = "End", chars = "\u0005" },
   # NOTE: tmux
   # NOTE: prefix key is C-b "$HOME/.config/tmux/tmux.conf"
   #
@@ -97,20 +99,22 @@ bindings = [
   # ⌥ + d adds a pane to the right (splits window vertically)
   { key = "D",  mods = "Option", chars = "\u0020|" },
   # ⌥ + ⇧ + d adds a pane below (splits window horizontally)
-  { key = "D",  mods = "Option|Shift", chars = "\u0020-" },
-  # ⌘ + ⌥ + arrows are for directional navigation around the nvim panes
-  { key = "W",  mods = "Option", chars = "\u0020\u0062d" },
+  { key = "D",  mods = "Option|Shift", chars = "\u0020-", mode = "AppCursor" },
+  # ⌥ + w to close vim buffer
+  { key = "W",  mods = "Option", chars = "\u0020\u0062d", mode = "AppCursor" },
   # emulates ^ + hjkl
   # NOTE "$HOME/.config/nvim/lua/config/keymaps.lua"
-  { key = "Down", mods = "Command|Option", chars = "\u000a" },
-  { key = "Up", mods = "Command|Option", chars = "\u000b" },
-  { key = "Left", mods = "Command|Option", chars = "\u0008" },
-  { key = "Right", mods = "Command|Option", chars = "\u000c" },
+  { key = "Down", mods = "Command|Option", chars = "\u000a", mode = "AppCursor" },
+  { key = "Up", mods = "Command|Option", chars = "\u000b", mode = "AppCursor" },
+  { key = "Left", mods = "Command|Option", chars = "\u0008", mode = "AppCursor" },
+  { key = "Right", mods = "Command|Option", chars = "\u000c", mode = "AppCursor" },
   # ^ + arrows are for resizing of the nvim panes
   # NOTE see default nvim bindings
   # NOTE: mission control shorcuts should be turned off
   #
   # ⌥ + Tab + Shift for navigate to next and previous buffer
-  { key = "Tab", mods = "Option|Shift", chars = "\u0048" },
-  { key = "Tab", mods = "Option", chars = "\u004c" },
+  { key = "Tab", mods = "Option|Shift", chars = "\u0048", mode = "AppCursor" },
+  { key = "Tab", mods = "Option", chars = "\u004c", mode = "AppCursor" },
+  { key = "Home", mods = "Option", chars = "\u001b[1;3H", mode = "AppCursor" },
+  { key = "End", mods = "Option", chars = "\u001b[1;3F", mode = "AppCursor" },
 ]
