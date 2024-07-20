@@ -4,11 +4,16 @@ source "$HOME/.config/zsh/history.sh"
 source "$HOME/.config/zsh/aliases.sh"
 source "$HOME/.config/zsh/bindings.sh"
 source "$HOME/.config/zsh/completion.sh"
-# iterm2 integrations (e.g. for auto-marks)
-test -e "$HOME/.config/zsh/iterm2_shell_integration.zsh" && source "$HOME/.config/zsh/iterm2_shell_integration.zsh" || true
 
 # https://brew.sh/
 [ -f '/opt/homebrew/bin/brew' ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# iterm2 integrations (e.g. for auto-marks)
+test -e "$HOME/.config/zsh/iterm2_shell_integration.zsh" && 
+  source "$HOME/.config/zsh/iterm2_shell_integration.zsh" || true
+# https://github.com/zsh-users/zsh-autosuggestions
+[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && 
+  source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # https://github.com/ryanoasis/nerd-fonts/releases
 [[ starship ]] && eval "$(starship init zsh)"
