@@ -108,8 +108,6 @@ zstyle ':completion:*' keep-prefix true
 zstyle -e ':completion:*:(ssh|scp|sftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
 
 
-# https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
-[[ kubectl ]] && source <(kubectl completion zsh)
-
 # https://github.com/zsh-users/zsh-autosuggestions
 [ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
