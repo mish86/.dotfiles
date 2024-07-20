@@ -20,6 +20,8 @@ alias ls='eza'
 alias l='eza --oneline --long'
 alias ll='eza --oneline --long --icons=always --group-directories-first --all --sort=modified'
 
+alias less='less --mouse --wheel-lines=1 --use-color'
+
 # +----+
 # | cp |
 # +----+
