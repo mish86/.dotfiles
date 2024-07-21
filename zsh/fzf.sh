@@ -9,12 +9,12 @@ fi
 source <(fzf --zsh)
 
 # fzf
-export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git"'
 export FZF_CTRL_T_OPTS="
   --walker-skip .git,node_modules,target
   --preview 'bat -n --color=always {}'
   --bind 'ctrl-/:change-preview-window(down|hidden|)'"
-#export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+# export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # https://github.com/catppuccin/fzf
 FZF_COLORS=" \
@@ -55,3 +55,18 @@ _fzf_comprun() {
 # GIT shortcuts
 source "$HOME/.config/fzf-git/fzf-git.sh"
 export KEYTIMEOUT=100
+
+# https://news.ycombinator.com/item?id=38471822
+# https://github.com/junegunn/fzf/blob/master/ADVANCED.md#switching-between-ripgrep-mode-and-fzf-mode-using-a-single-key-binding
+function frg {
+  result=$(rg --ignore-case --color=always --line-number --no-heading "$@" |
+    fzf --ansi \
+      --color 'hl:-1:underline,hl+:-1:underline:reverse' \
+      --delimiter ':' \
+      --preview "bat --color=always {1} --highlight-line {2}")
+  file=${result%%:*}
+  linenumber=$(echo "${result}" | cut -d: -f2)
+  if [[ -n "$file" ]]; then
+    $EDITOR +"${linenumber}" "$file"
+  fi
+}
