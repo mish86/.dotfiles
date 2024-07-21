@@ -43,7 +43,12 @@ regex = "(ipfs:|ipns:|magnet:|mailto:|gemini://|gopher://|https://|http://|news:
 [keyboard]
 bindings = [
   { key = "Home", chars = "\u0001" },
+  # { key = "Home", chars = "\u001b[H", mode = "~AppCursor" },
   { key = "End", chars = "\u0005" },
+  # { key = "End", chars = "\u001b[F", mode = "~AppCursor" },
+  # { key = "PageUp", chars = "\u001b[5~" },
+
+
   # NOTE: tmux
   # NOTE: prefix key is C-b "$HOME/.config/tmux/tmux.conf"
   #
@@ -115,6 +120,13 @@ bindings = [
   # ⌥ + Tab + Shift for navigate to next and previous buffer
   { key = "Tab", mods = "Option|Shift", chars = "\u0048", mode = "AppCursor" },
   { key = "Tab", mods = "Option", chars = "\u004c", mode = "AppCursor" },
+  # ⌥ + Home or End for navigate to start and end of a line
   { key = "Home", mods = "Option", chars = "\u001b[1;3H", mode = "AppCursor" },
   { key = "End", mods = "Option", chars = "\u001b[1;3F", mode = "AppCursor" },
+  # ⌥ + Left or Right for jump backward and forward by words
+  # { key = "Left", mods = "Option", chars = "\u001b[1;3D" },
+  # { key = "Right", mods = "Option", chars = "\u0077", mode = "AppCursor" },
+  # ⌥ + Up or Down for move line
+  # { key = "Up", mods = "Option", chars = "\u001bk", mode = "AppCursor" },
+  # { key = "Down", mods = "Option", chars = "\u001bj", mode = "AppCursor" },
 ]
