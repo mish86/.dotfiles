@@ -14,12 +14,12 @@ vim.keymap.set("n", "<M-Right>", "w", { desc = "forward-word" })
 vim.keymap.set("n", "<M-Up>", ":m -2<CR>", { desc = "move line up" })
 vim.keymap.set("n", "<M-Down>", ":m +1<CR>", { desc = "move line down" })
 
-local cmp = require("cmp")
-cmp.setup({
-  completion = {
-    autocomplete = false,
-  },
-  mapping = {
-    ["<C-Space>"] = cmp.mapping.complete(),
-  },
-})
+-- local cmp = require("cmp")
+-- cmp.setup({
+--   completion = {
+--     autocomplete = false,
+--   },
+--   mapping = {
+--     ["<C-Space>"] = cmp.mapping.complete(),
+--   },
+-- })
