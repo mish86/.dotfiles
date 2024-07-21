@@ -24,7 +24,7 @@ return {
     "williamboman/mason.nvim",
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, {
-        -- "black",
+        "black",
         -- "isort",
         "ruff",
         "pyright",
@@ -33,32 +33,25 @@ return {
     end,
   },
 
+  -- http://www.lazyvim.org/extras/formatting/black
   {
     "stevearc/conform.nvim",
     opts = {
       formatters_by_ft = {
-        python = { "ruff" },
+        python = { "black" },
+        -- python = { "ruff" },
       },
     },
   },
 
-  -- {
-  --   "nvimtools/none-ls.nvim",
-  --   optional = true,
-  --   opts = function(_, opts)
-  --     local nls = require("null-ls")
-  --     opts.sources = opts.sources or {}
-  --     table.insert(opts.sources, nls.builtins.formatting.black)
-  --   end,
-  -- },
-  --
   -- For selecting virtual envs
   {
     "linux-cultist/venv-selector.nvim",
     branch = "regexp",
-    -- dependencies = {
-    --   "mfussenegger/nvim-dap-python",
-    -- },
+    dependencies = {
+      "mfussenegger/nvim-dap-python",
+      "mfussenegger/nvim-dap",
+    },
     cmd = "VenvSelect",
     opts = {
       dap_enabled = true,
