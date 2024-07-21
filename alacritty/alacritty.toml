@@ -121,8 +121,8 @@ bindings = [
   { key = "Tab", mods = "Option|Shift", chars = "\u0048", mode = "AppCursor" },
   { key = "Tab", mods = "Option", chars = "\u004c", mode = "AppCursor" },
   # ⌥ + Home or End for navigate to start and end of a line
-  { key = "Home", mods = "Option", chars = "\u001b[1;3H", mode = "AppCursor" },
-  { key = "End", mods = "Option", chars = "\u001b[1;3F", mode = "AppCursor" },
+  { key = "Home", mods = "Option", chars = "0", mode = "AppCursor" },
+  { key = "End", mods = "Option", chars = "$", mode = "AppCursor" },
   # ⌥ + Left or Right for jump backward and forward by words
   # { key = "Left", mods = "Option", chars = "\u001b[1;3D" },
   # { key = "Right", mods = "Option", chars = "\u0077", mode = "AppCursor" },
