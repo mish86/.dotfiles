@@ -3,18 +3,18 @@ return {
   "hrsh7th/nvim-cmp",
   opts = function(_, opts)
     local cmp = require("cmp")
-    return {
-      completion = {
-        autocomplete = false,
-      },
-      -- mapping = cmp.mapping.preset.insert({
-      --   ["<C-Space>"] = cmp.mapping.complete(),
-      -- }),
-      window = {
-        completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
-      },
-      sources = {},
+
+    opts.completion = {
+      autocomplete = false,
+    }
+
+    opts.mapping = vim.tbl_extend("force", opts.mapping, {
+      ["<C-Space>"] = cmp.mapping.complete(),
+    })
+
+    opts.window = {
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
     }
   end,
 }
