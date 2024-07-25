@@ -28,6 +28,9 @@ brew install starship
 # autosuggestions for zsh
 # https://github.com/zsh-users/zsh-autosuggestions
 brew install zsh-autosuggestions
+# syntax highlighting
+# https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md
+brew install zsh-syntax-highlighting
 
 # terminal multiplexer
 brew install tmux
