@@ -21,15 +21,15 @@ decorations = "Buttonless"
 startup_mode = "Maximized"
 dynamic_title = true
 
-opacity = 0.9
+opacity = 0.8
 blur = true
 
 option_as_alt = "Both"
 
 [font]
-# normal.family = "MesloLGS Nerd Font"
-normal.family = "Hack Nerd Font"
-size = 16
+normal.family = "MesloLGS Nerd Font"
+# normal.family = "Hack Nerd Font"
+size = 15
 
 [[hints.enabled]]
 command = "open" # On macOS

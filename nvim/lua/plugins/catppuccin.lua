@@ -8,7 +8,7 @@ return {
     flavour = "mocha",
     priority = 1000,
     opts = {
-      transparent_background = true,
+      transparent_background = false,
       integrations = {
         aerial = true,
         alpha = true,
