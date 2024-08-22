@@ -32,7 +32,6 @@ return {
       })
     end,
   },
-
   -- http://www.lazyvim.org/extras/formatting/black
   {
     "stevearc/conform.nvim",
