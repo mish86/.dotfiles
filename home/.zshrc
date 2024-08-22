@@ -21,7 +21,9 @@ source "$HOME/.config/zsh/completion.sh"
   source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # https://github.com/ryanoasis/nerd-fonts/releases
-[[ starship ]] && eval "$(starship init zsh)"
+[[ starship ]] && \
+  export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml" && \
+  eval "$(starship init zsh)"
 
 # https://github.com/junegunn/fzf
 [[ fzf ]] && source "$HOME/.config/zsh/fzf.sh"
