@@ -37,6 +37,7 @@ zmodload zsh/complist
 #bindkey -M menuselect '^xu' undo                           # Undo
 
 autoload -Uz compinit; compinit
+autoload -U +X bashcompinit && bashcompinit
 _comp_options+=(globdots) # With hidden files
 
 # Only work with the Zsh function vman
