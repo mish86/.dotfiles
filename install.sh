@@ -3,8 +3,7 @@
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # dotfiles management
-# https://www.gnu.org/software/stow/
-# https://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html?round=two
+# https://www.gnu.org/software/stow/ https://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html?round=two
 brew install stow
 
 # brew install bash
@@ -38,6 +37,7 @@ brew install tmux
 git clone https://github.com/tmux-plugins/tpm "$HOME/.dotfiles/tmux/plugins/tpm"
 # tmuxifier
 # git clone https://github.com/jimeh/tmuxifier.git "$HOME/.config/tmuxifier"
+brew install cmatrix
 
 # text editor
 # https://neovim.io/
@@ -135,6 +135,9 @@ brew install duti
 # macOS system monitor in your menu bar
 # https://github.com/exelban/stats
 brew install stats
+
+# https://github.com/MonitorControl/MonitorControl
+brew install MonitorControl
 
 # ----- #
 # Theme #
