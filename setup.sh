@@ -23,6 +23,8 @@ mkdir -p "$HOME/.config/yazi"
 stow yazi -t "$HOME/.config/yazi" --adopt -v
 mkdir -p "$HOME/.config/zsh"
 stow zsh -t "$HOME/.config/zsh" --adopt -v
+mkdir -p "$HOME/.config/starship"
+stow starship -t "$HOME/.config/starship" --adopt -v
 # .zshrc
 stow home -t $HOME --adopt -v
 
