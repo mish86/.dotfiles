@@ -112,6 +112,7 @@ brew install pre-commit
 # ------ #
 brew install pip
 brew install pipx
+brew install pyenv
 brew install node
 brew install openjdk
 

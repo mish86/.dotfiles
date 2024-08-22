@@ -37,6 +37,11 @@ tmux source "$HOME/.config/tmux/tmux.conf"
 # https://github.com/sharkdp/bat
 bat cache --build
 
+# ------ #
+# DevKit #
+# ------ #
+pipx install argcomplete
+
 # --- #
 # GIT #
 # --- #
