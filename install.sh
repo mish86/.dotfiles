@@ -116,6 +116,15 @@ brew install pyenv
 brew install node
 brew install openjdk
 
+# ------ #
+# DevOps #
+# ------ #
+# https://developer.hashicorp.com/terraform/install#darwin
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+# https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+brew install awscli
+
 # --------#
 # Network #
 # ------- #
