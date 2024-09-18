@@ -149,6 +149,9 @@ brew install stats
 # https://github.com/MonitorControl/MonitorControl
 brew install MonitorControl
 
+# https://github.com/tarutin/hovrly
+brew install hovrly
+
 # ----- #
 # Theme #
 # ----- #
