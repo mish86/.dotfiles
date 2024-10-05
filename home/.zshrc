@@ -42,4 +42,5 @@ source "$HOME/.config/yazi/yazi_scripts.sh"
 
 source "$HOME/.config/zsh/kube.sh"
 source "$HOME/.config/zsh/python.sh"
+source "$HOME/.config/zsh/go.sh"
 
