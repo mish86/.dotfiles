@@ -115,6 +115,7 @@ brew install pipx
 brew install pyenv
 brew install node
 brew install openjdk
+brew install maven
 
 # ------ #
 # DevOps #
@@ -151,6 +152,15 @@ brew install MonitorControl
 
 # https://github.com/tarutin/hovrly
 brew install hovrly
+
+# https://github.com/jordanbaird/Ice
+brew install jordanbaird-ice
+
+# https://dropoverapp.com
+# AppStore
+
+# https://www.mowglii.com/itsycal/
+# Optional
 
 # ----- #
 # Theme #
