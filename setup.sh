@@ -33,7 +33,7 @@ stow home -t $HOME --adopt -v
 # -------- #
 
 # load tmux config
-tmux source "$HOME/.config/tmux/tmux.conf"
+tmux start-server; tmux source "$HOME/.config/tmux/tmux.conf"
 # https://github.com/sharkdp/bat
 bat cache --build
 
