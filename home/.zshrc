@@ -13,22 +13,18 @@ source "$HOME/.config/zsh/completion.sh"
   # source "$HOME/.config/zsh/iterm2_shell_integration.zsh" || true
 
 # https://github.com/zsh-users/zsh-autosuggestions
-[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && 
-  source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+[ -f "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && 
+  source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md
-[ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && 
-  source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-# https://github.com/ryanoasis/nerd-fonts/releases
-[[ starship ]] && \
-  export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml" && \
-  eval "$(starship init zsh)"
+[ -f "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && 
+  source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # https://github.com/junegunn/fzf
 [[ fzf ]] && source "$HOME/.config/zsh/fzf.sh"
 [[ bat ]] && source "$HOME/.config/zsh/bat.sh"
 [[ lazygit ]] && source "$HOME/.config/zsh/lazygit.sh"
+[[ zoxide ]] && eval "$(zoxide init zsh)"
 
 # https://github.com/charmbracelet/gum
 # [[ gum ]] && source "$HOME/.config/zsh/gum_scripts.sh"
@@ -43,4 +39,9 @@ source "$HOME/.config/yazi/yazi_scripts.sh"
 source "$HOME/.config/zsh/kube.sh"
 source "$HOME/.config/zsh/python.sh"
 source "$HOME/.config/zsh/go.sh"
+
+# https://github.com/ryanoasis/nerd-fonts/releases
+[[ starship ]] && \
+  export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml" && \
+  eval "$(starship init zsh)"
 

@@ -3,7 +3,7 @@
 # NOTE: dependency on completion.sh
 
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
-[[ kubectl ]] && source <(kubectl completion zsh)
+[ -f kubectl ] && source <(kubectl completion zsh)
 
 # NOTE: dependency on fzf.sh
 

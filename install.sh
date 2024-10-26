@@ -47,6 +47,9 @@ brew install neovim
 # https://yazi-rs.github.io/
 brew install yazi
 
+# https://github.com/ajeetdsouza/zoxide
+brew install zoxide
+
 # modern ls
 # https://eza.rocks/
 brew install eza
