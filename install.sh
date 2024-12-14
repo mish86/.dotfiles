@@ -83,8 +83,9 @@ brew install glow
 # --- #
 # CLI #
 # --- #
-
 brew install watch
+# https://github.com/ouch-org/ouch?tab=readme-ov-file#installation
+brew install ouch
 
 # K8s CLI tool
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#install-with-homebrew-on-macos
