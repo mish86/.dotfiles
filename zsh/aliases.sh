@@ -30,6 +30,12 @@ alias cp='cp -iv'
 alias mv='mv -iv'
 alias rm='rm -iv'
 
+# zip
+alias zip='zip -x "*.DS_Store" -x "__MACOSX"'
+
+# dbs
+alias arangosh='podman run --rm -it arangodb/arangodb:latest arangosh'
+
 # +------+
 # | grep |
 # +------+
