@@ -14,6 +14,8 @@ vim.keymap.set("n", "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight, { desc = "tmux
 vim.keymap.set("n", "<Tab>", ">>", { desc = "Indent line" })
 vim.keymap.set("n", "<S-Tab>", "<<", { desc = "Outdent line" })
 
+vim.keymap.set("n", "<leader>rn", ":IncRename ", { desc = "Incremental Rename" })
+
 -- vim.keymap.set("n", "<M-Left>", "b", { desc = "backward-word" })
 -- vim.keymap.set("n", "<M-Right>", "w", { desc = "forward-word" })
 -- vim.keymap.set("n", "<M-Up>", ":m -2<CR>", { desc = "move line up" })
