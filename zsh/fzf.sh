@@ -22,7 +22,7 @@ FZF_COLORS=" \
 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
 --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
 
-export FZF_DEFAULT_OPTS="--height 60% \
+export FZF_DEFAULT_OPTS="--height=50% --tmux 90%,70% \
 --border sharp \
 --layout reverse \
 $FZF_COLORS \
