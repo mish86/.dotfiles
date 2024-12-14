@@ -91,6 +91,7 @@ brew install ouch
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#install-with-homebrew-on-macos
 brew install kubectl
 brew install kustomize
+brew install derailed/k9s/k9s 
 
 # JSON processor
 # https://jqlang.github.io/jq/
@@ -190,3 +191,4 @@ git clone https://github.com/catppuccin/bat.git "$HOME/.dotfiles/catppuccin/bat"
 git clone https://github.com/catppuccin/lazygit.git "$HOME/.dotfiles/catppuccin/lazygit"
 git clone https://github.com/yazi-rs/flavors.git "$HOME/.dotfiles/yazi/flavors"
 git clone https://github.com/yazi-rs/plugins.git "$HOME/.dotfiles/yazi/plugins"
+curl -L https://github.com/catppuccin/k9s/archive/main.tar.gz | tar xz -C "$HOME/.dotfiles/k9s/skins" --strip-components=2 k9s-main/dist

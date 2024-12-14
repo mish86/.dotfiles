@@ -25,6 +25,8 @@ mkdir -p "$HOME/.config/zsh"
 stow zsh -t "$HOME/.config/zsh" --adopt -v
 mkdir -p "$HOME/.config/starship"
 stow starship -t "$HOME/.config/starship" --adopt -v
+mkdir -p "$HOME/.config/k9s"
+stow k9s -t "$HOME/.config/k9s" --adopt -v
 # .zshrc
 stow home -t $HOME --adopt -v
 
