@@ -129,10 +129,21 @@ brew install hashicorp/tap/terraform
 # https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 brew install awscli
 
+# ---------- #
+# containers #
+# ---------- #
+brew install podman
+
+# --------- #
+# DataBases #
+# --------- #
+brew install mongosh
+# podman pull arangodb/arangodb
+# podman run --rm -it arangodb/arangodb:latest arangosh
+
 # --------#
 # Network #
 # ------- #
-
 # dnsmasq
 brew install dnsmasq
 # dig

@@ -33,7 +33,8 @@ stow home -t $HOME --adopt -v
 # -------- #
 
 # load tmux config
-tmux start-server; tmux source "$HOME/.config/tmux/tmux.conf"
+tmux start-server
+tmux source "$HOME/.config/tmux/tmux.conf"
 # https://github.com/sharkdp/bat
 bat cache --build
 
@@ -41,6 +42,11 @@ bat cache --build
 # DevKit #
 # ------ #
 pipx install argcomplete
+
+# --------- #
+# DataBases #
+# --------- #
+podman pull arangodb/arangodb
 
 # --- #
 # GIT #
