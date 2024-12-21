@@ -2,8 +2,8 @@
 
 # NOTE: dependency on completion.sh
 
-# https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/
-[ -f kubectl ] && source <(kubectl completion zsh)
+# https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#enable-shell-autocompletion
+source <(kubectl completion zsh)
 
 # NOTE: dependency on fzf.sh
 
