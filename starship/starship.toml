@@ -3,10 +3,25 @@
 
 add_newline = false
 
-format = """$status$cmd_duration
-$all"""
+# format = """$status$cmd_duration
+# $all$time"""
 
-right_format = """$time"""
+format = """$status$cmd_duration\
+\n\
+$directory \
+$git_branch\
+$git_status\
+$kubernetes \
+$golang\
+$python\
+$fill $time\
+\n$character"""
+
+# right_format = """$time"""
+
+# Fill character (empty space) between the left and right prompt
+[fill]
+symbol = "."
 
 [time]
 disabled = false
@@ -57,6 +72,7 @@ symbol = " "
 
 [directory]
 read_only = " 󰌾"
+format = "in [$path]($style)[$read_only]($read_only_style)"
 
 [docker_context]
 symbol = " "
@@ -105,7 +121,8 @@ symbol = " "
 
 [kubernetes]
 disabled = false
-format = 'on [$symbol$context]($style) in '
+format = 'on [$symbol$context]($style)'
+style = 'bold blue'
 
 [lua]
 symbol = " "
