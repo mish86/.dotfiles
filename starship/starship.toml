@@ -3,19 +3,16 @@
 
 add_newline = false
 
-# format = """$status$cmd_duration
-# $all$time"""
-
 format = """$status$cmd_duration\
-\n\
-$directory \
+$directory\
 $git_branch\
 $git_status\
-$kubernetes \
+$kubernetes\
 $golang\
 $python\
+$nodejs\
 $fill $time\
-\n$character"""
+\n$shell$character"""
 
 # right_format = """$time"""
 
@@ -30,7 +27,9 @@ format = '[$time]($style) '
 [cmd_duration]
 disabled = false
 # min_time = 0
-format = "took [$duration]($style) \n"
+min_time = 2_000
+# format = "took [$duration]($style)"
+format = "[⏱ $duration]($style) \n"
 
 [battery]
 disabled = false
@@ -46,7 +45,7 @@ style = 'bold yellow'
 
 [status]
 disabled = false
-format = "[ $signal_name $symbol ]($style)"
+format = "[$signal_name $symbol \n]($style)"
 map_symbol = true
 sigint_symbol = "[✘](fg:#d60202 )"
 # success_symbol = "[✔](fg:#B3E1A7 )"
@@ -72,7 +71,7 @@ symbol = " "
 
 [directory]
 read_only = " 󰌾"
-format = "in [$path]($style)[$read_only]($read_only_style)"
+format = "in [$path]($style)[$read_only]($read_only_style) "
 
 [docker_context]
 symbol = " "
@@ -121,7 +120,7 @@ symbol = " "
 
 [kubernetes]
 disabled = false
-format = 'on [$symbol$context]($style)'
+format = 'on [$symbol$context]($style) '
 style = 'bold blue'
 
 [lua]
