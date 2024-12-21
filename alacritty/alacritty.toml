@@ -1,5 +1,5 @@
 general.import = [
-  "~/.config/catppuccin/alacritty/catppuccin-mocha.toml"
+  "~/.config/catppuccin/alacritty/catppuccin-macchiato.toml"
 ]
 
 [env]
@@ -21,8 +21,8 @@ decorations = "Buttonless"
 startup_mode = "Maximized"
 dynamic_title = true
 
-opacity = 0.9
-blur = true
+# opacity = 0.9
+# blur = true
 
 option_as_alt = "Both"
 

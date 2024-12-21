@@ -9,17 +9,25 @@ fi
 source <(fzf --zsh)
 
 # fzf theme: https://github.com/catppuccin/fzf
-FZF_COLORS=" \
+FZF_MOCHA_COLORS=" \
 --color='bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8' \
 --color='fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc' \
---color='marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8'"
+--color='marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8'
+--multi"
+
+FZF_MACCHIATO_COLORS=" \
+--color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796 \
+--color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6 \
+--color=marker:#b7bdf8,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796 \
+--color=selected-bg:#494d64 \
+--multi"
 
 # --tmux options does not work in FZF_DEFAULT_OPTS
 export FZF_TMUX_OPTS="-p 80%,80%"
 export FZF_DEFAULT_OPTS="--height '50%' --tmux 'center,80%,50%' \
 --border sharp \
 --layout reverse \
-$FZF_COLORS \
+$FZF_MACCHIATO_COLORS \
 --prompt '> ' \
 --pointer '▶' \
 --marker '┃'"
