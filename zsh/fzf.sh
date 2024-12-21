@@ -8,33 +8,39 @@ fi
 
 source <(fzf --zsh)
 
-# fzf
+# fzf theme: https://github.com/catppuccin/fzf
+FZF_COLORS=" \
+--color='bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8' \
+--color='fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc' \
+--color='marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8'"
+
+# --tmux options does not work in FZF_DEFAULT_OPTS
+export FZF_TMUX_OPTS="-p 80%,80%"
+export FZF_DEFAULT_OPTS="--height '50%' --tmux 'center,80%,50%' \
+--border sharp \
+--layout reverse \
+$FZF_COLORS \
+--prompt '> ' \
+--pointer '▶' \
+--marker '┃'"
+
+# fzf commands
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git"'
+export FZF_CTRL_R_OPTS="
+  --bind 'ctrl-y:execute-silent(echo -n {2..} | pbcopy)+abort'
+  --color header:italic
+  --header 'Press CTRL-Y to copy command into clipboard'"
 export FZF_CTRL_T_OPTS="
   --walker-skip .git,node_modules,target
   --preview 'bat -n --color=always {}'
   --bind 'ctrl-/:change-preview-window(down|hidden|)'"
 # export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-# https://github.com/catppuccin/fzf
-FZF_COLORS=" \
---color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
---color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
---color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
-
-export FZF_DEFAULT_OPTS="--height=50% --tmux 90%,70% \
---border sharp \
---layout reverse \
-$FZF_COLORS \
---prompt '> ' \
---pointer ▶ \
---marker ┃"
 export FZF_ALT_C_OPTS="
   --walker-skip .git,node_modules,target
   --preview 'eza --tree --color=always {} | head -200'"
 export FZF_COMPLETION_DIR_COMMANDS="cd pushd rmdir tree ls eza"
 
-export FZF_TMUX_OPTS="-p"
 
 # Advanced customization of fzf options via _fzf_comprun function
 # - The first argument to the function is the name of the command.
