@@ -5,13 +5,14 @@ add_newline = false
 
 format = """$status$cmd_duration\
 $directory\
-$git_branch\
-$git_status\
 $kubernetes\
 $golang\
 $python\
 $nodejs\
-$fill $time\
+$fill \
+$git_branch\
+$git_status\
+$time\
 \n$shell$character"""
 
 # right_format = """$time"""
@@ -203,6 +204,7 @@ symbol = " "
 
 [python]
 symbol = " "
+pyenv_version_name = true
 
 [rlang]
 symbol = "󰟔 "
