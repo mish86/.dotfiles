@@ -9,10 +9,3 @@ bindkey '^[[3;3~' kill-word
 
 bindkey '^[[A' history-search-backward
 bindkey '^[[B' history-search-forward
-
-# clear-scrollback-and-screen() {
-#   zle clear-screen
-#   tmux clear-history
-# }
-# zle -N clear-scrollback-and-screen
-# bindkey '^[L' clear-scrollback-and-screen
