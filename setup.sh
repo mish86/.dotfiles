@@ -9,6 +9,8 @@ mkdir -p "$HOME/.config/catppuccin"
 stow catppuccin -t "$HOME/.config/catppuccin" --adopt -v
 mkdir -p "$HOME/.config/alacritty"
 stow alacritty -t "$HOME/.config/alacritty" --adopt -v
+mkdir -p "$HOME/.config/ghostty"
+stow ghostty -t "$HOME/.config/ghostty" --adopt -v
 mkdir -p "$HOME/.config/bat"
 stow bat -t "$HOME/.config/bat" --adopt -v
 mkdir -p "$HOME/.config/fzf-git"

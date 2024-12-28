@@ -14,6 +14,8 @@ brew install stow
 
 # https://alacritty.org/
 brew install alacritty
+# https://ghostty.org
+brew install ghostty
 
 # system information tool
 # https://github.com/dylanaraps/neofetch

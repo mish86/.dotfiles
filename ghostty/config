@@ -1,0 +1,130 @@
+#### theme ####
+theme = catppuccin-macchiato
+config-file = ghostty-shaders
+
+#### font ####
+font-family = "MesloLGS Nerd Font"
+font-size = 15
+
+#### window ###
+window-padding-x = 10
+window-padding-y = 10
+quick-terminal-position = top
+# window-decoration = true
+macos-titlebar-style = hidden
+macos-option-as-alt = true
+# macos-non-native-fullscreen = true
+quit-after-last-window-closed=true
+
+#### cursor ####
+mouse-hide-while-typing = true
+cursor-click-to-move = true
+cursor-style = block
+shell-integration-features = no-cursor
+
+#### terminal ####
+term = xterm-256color
+shell-integration = zsh
+# initial-command instead of command to prevent quick terminal to run with tmux
+initial-command = zsh --login -c "source ~/.zshrc; cd ~/Downloads; ftmux"
+
+#### keyboard ####
+## terminal window ## 
+# ⌃ + ` toggles quick terminal
+keybind = ctrl+`=toggle_quick_terminal
+# ⌘ + enter toggles full screen
+keybind = cmd+shift+enter=toggle_fullscreen
+
+## tmux ##
+# tmux: cursor navigation #
+# ⌘ + k clears tmux pane screen and scroll history
+# NOTE "$HOME/.config/tmux/tmux.conf"
+keybind = cmd+k=text:\x02\x4b
+# ⌥ + ← sends backward-word
+keybind = alt+left=text:\x1b[1;3D
+# ⌥ + → sends forward-word
+keybind = alt+right=text:\x1b[1;3C
+# home sends beginning-of-line
+keybind = home=text:\x01
+# end sends end-of-line
+keybind = end=text:\x1b[F
+
+# tmux: panes #
+# ⌘ + d adds a pane to the right (splits window vertically)
+keybind = cmd+d=text:\x02%
+# ⌘ + ⇧ + d adds a pane below (splits window horizontally)
+keybind = cmd+shift+d=text:\x02\"
+# ⌘ + w prompts you to close a pane, "y" to confirm
+keybind = cmd+w=text:\x02x
+# ⌘ + arrows are for directional navigation around panes
+keybind = cmd+down=text:\x02\x1b[B
+keybind = cmd+up=text:\x02\x1b[A
+keybind = cmd+left=text:\x02\x1b[D
+keybind = cmd+right=text:\x02\x1b[C
+# ⌘ + ⇧ + arrows are for directional resizing of panes
+keybind = cmd+shift+down=text:\x02\x1b[1;5B
+keybind = cmd+shift+up=text:\x02\x1b[1;5A
+keybind = cmd+shift+left=text:\x02\x1b[1;5D
+keybind = cmd+shift+right=text:\x02\x1b[1;5C
+# ⌘ + ⇧ + enter zooms in a pane
+keybind = cmd+shift+enter=text:\x02\x7a
+
+# tmux: windows #
+# ⌘ + t creates new window
+keybind = cmd+t=text:\x02\x63
+# ⌃ + ⇥ and ⌃ + ⇧ + ⇥ navigates to next and previous window
+# does not work
+# keybind = ctrl+physical:tab=text:\x026e
+# keybind = ctrl+shift+physical:tab=text:\x0270
+# ⌘ + ⇥ navigate to last window
+# NOTE "$HOME/.config/tmux/tmux.conf"
+# keybind = ctrl+tab=text:\x02\x09
+# ⌘ + [ or ] for navigate to next and previous window
+keybind = cmd+right_bracket=text:\x02\x6e
+keybind = cmd+left_bracket=text:\x02\x70
+# ⌘ + ⇧ + [ or ] for swap to next and previous window
+keybind = cmd+shift+right_bracket=text:\x02\x5d
+keybind = cmd+shift+left_bracket=text:\x02\x5b
+# ⌘ + 0..9 for navigate to window by number
+keybind = cmd+physical:one=text:\x02\x31
+keybind = cmd+physical:two=text:\x02\x32
+keybind = cmd+physical:three=text:\x02\x33
+keybind = cmd+physical:four=text:\x02\x34
+keybind = cmd+physical:five=text:\x02\x35
+keybind = cmd+physical:six=text:\x02\x36
+keybind = cmd+physical:seven=text:\x02\x37
+keybind = cmd+physical:eight=text:\x02\x38
+keybind = cmd+physical:nine=text:\x02\x39
+
+
+## nvim ##
+# nvim: panes #
+# ⌥ + d adds a pane to the right (splits window vertically)
+keybind = alt+d=text:\x20|
+# ⌥ + ⇧ + d adds a pane below (splits window horizontally)
+keybind = alt+shift+d=text:\x20-
+# ⌥ + w to close vim buffer
+keybind = alt+w=text:\x20\x62d"
+# ⌘ + ⌥ + arrows emulates ^ + hjkl
+# NOTE "$HOME/.config/nvim/lua/config/keymaps.lua"
+keybind = cmd+alt+down=text:\x0a
+keybind = cmd+alt+up=text:x0b
+keybind = cmd+alt+left=text:\x08
+keybind = cmd+alt+right=text:\x0c
+# ⌥ + ⇥ and ⌥ + ⇧ + ⇥ for navigate to next and previous buffer
+keybind = alt+physical:tab=text:\x4c
+keybind = alt+shift+physical:tab=text:\x48
+# ⌥ + [ or ] for navigate to next and previous buffer
+keybind = alt+left_bracket=text:\x48
+keybind = alt+right_bracket=text:\x4c
+# ⌥ + ⇧ + [ or ] for swap buffer to left or right 
+keybind = alt+shift+left_bracket=text:[B
+keybind = alt+shift+right_bracket=text:]B
+# ⌥ + Home or End for navigate to start and end of a line
+keybind = alt+home=text:0
+keybind = alt+end=text:$
+# ⌥ + ⇧ + arrows for changing pane width and height
+keybind = alt+shift+down=text:\x1b[1;5B
+keybind = alt+shift+up=text:\x1b[1;5A
+keybind = alt+shift+left=text:\x1b[1;5D
+keybind = alt+shift+right=text:\x1b[1;5C
