@@ -63,13 +63,14 @@ bindings = [
   { key = "D",  mods = "Command|Shift", chars = "\u0002\"" },
   # ⌘ + w prompts you to close the pane, "y" to confirm
   { key = "W",  mods = "Command", chars = "\u0002x" },
+  # ⌘ + t creates new window
   { key = "T", mods = "Command", chars = "\u0002\u0063" },
   # ⌘ + arrows are for directional navigation around the panes
   { key = "Down", mods = "Command", chars = "\u0002\u001b[B" },
   { key = "Up", mods = "Command", chars = "\u0002\u001b[A" },
   { key = "Left", mods = "Command", chars = "\u0002\u001b[D" },
   { key = "Right", mods = "Command", chars = "\u0002\u001b[C" },
-  # ⌘ + ^ + arrows are for directional resizing of the panes
+  # ⌘ + ⇧ + arrows are for directional resizing of the panes
   { key = "Down", mods = "Command|Shift", chars = "\u0002\u001b[1;5B" },
   { key = "Up", mods = "Command|Shift", chars = "\u0002\u001b[1;5A" },
   { key = "Left", mods = "Command|Shift", chars = "\u0002\u001b[1;5D" },
@@ -98,7 +99,7 @@ bindings = [
   # ⌘ + Tab navigate to last window
   # NOTE "$HOME/.config/tmux/tmux.conf"
   # { key = "Tab", mods = "Control", chars = "\u0002\u0009" },
-  # clear pane screen and scroll history
+  # ⌘ + k clears tmux pane screen and scroll history
   # NOTE "$HOME/.config/tmux/tmux.conf"
   { key = "K", mods = "Command", chars = "\u0002\u004b" },
 
