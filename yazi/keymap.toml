@@ -1,10 +1,15 @@
+[[manager.prepend_keymap]]
+on = [ "g", "c" ]
+run = "cd ~/.dotfiles"
+desc = "Goto ~/.dotfiles"
+
 # https://github.com/Lil-Dank/lazygit.yazi
 [[manager.prepend_keymap]]
 on   = [ "g", "l" ]
 run  = "plugin lazygit"
 desc = "run lazygit"
 
-[[manager.prepend_keymap]]
-on   = "f"
-run  = "plugin jump-to-char"
-desc = "Jump to char"
+# [[manager.prepend_keymap]]
+# on   = "f"
+# run  = "plugin jump-to-char"
+# desc = "Jump to char"
