@@ -1,6 +1,6 @@
 #### theme ####
 theme = catppuccin-macchiato
-config-file = ghostty-shaders
+# config-file = ghostty-shaders
 
 #### font ####
 font-family = "MesloLGS Nerd Font"

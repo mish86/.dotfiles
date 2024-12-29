@@ -1,4 +1,7 @@
 #!/bin/bash
+git clone https://github.com/ndtoan96/ouch.yazi.git "$HOME/.dotfiles/yazi/plugins/ouch.yazi"
+git clone https://github.com/Rolv-Apneseth/starship.yazi.git "$HOME/.dotfiles/yazi/plugins/starship.yazi"
+git clone https://github.com/Lil-Dank/lazygit.yazi.git "$HOME/.dotfiles/yazi/plugins/lazygit.yazi"
 
 # ---- #
 # stow #
