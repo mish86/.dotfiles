@@ -3,6 +3,10 @@
 -- Add any additional keymaps here
 
 vim.keymap.set("n", "x", '"_x')
+vim.keymap.set("n", "dd", '"_dd')
+vim.keymap.set("n", "dw", '"_dw')
+vim.keymap.set("n", "db", '"_db')
+vim.keymap.set("n", "D", '"_D')
 
 local nvim_tmux_nav = require("nvim-tmux-navigation")
 
@@ -11,8 +15,8 @@ vim.keymap.set("n", "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown, { desc = "tmux 
 vim.keymap.set("n", "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp, { desc = "tmux Navigate Up" })
 vim.keymap.set("n", "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight, { desc = "tmux Navigate Right" })
 
-vim.keymap.set("n", "<Tab>", ">>", { desc = "Indent line" })
-vim.keymap.set("n", "<S-Tab>", "<<", { desc = "Outdent line" })
+-- vim.keymap.set("n", "<Tab>", ">>", { desc = "Indent line" })
+-- vim.keymap.set("n", "<S-Tab>", "<<", { desc = "Outdent line" })
 
 vim.keymap.set("n", "<leader>rn", ":IncRename ", { desc = "Incremental Rename" })
 
