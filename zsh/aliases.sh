@@ -17,8 +17,8 @@ alias sudo='sudo '
 # +----+
 
 alias ls='eza'
-alias l='eza --oneline --long'
-alias ll='eza --oneline --long --icons=always --group-directories-first --all --sort=modified'
+alias l='eza --oneline --long --hyperlink'
+alias ll='eza --oneline --long --hyperlink --icons=always --group-directories-first --all --sort=modified'
 
 alias less='less --mouse --wheel-lines=1 --use-color'
 
@@ -56,7 +56,7 @@ alias vi='\vim -c "set nu" -c "set nowrap|syntax off"'
 # | Git |
 # +-----+
 
-alias gs='git status'
+# alias gs='git status'
 alias gss='git status -s'
 alias ga='git add'
 alias gp='git push'
