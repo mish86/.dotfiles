@@ -1,6 +1,10 @@
 #!/bin/bash
 
-[ ! -d "$(brew --prefix)" ] && /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# brew
+[ ! -d "$(brew --prefix)" ] && \
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+# https://github.com/mas-cli/mas
+brew install mas
 
 # dotfiles management
 # https://www.gnu.org/software/stow/ https://brandon.invergo.net/news/2012-05-26-using-gnu-stow-to-manage-your-dotfiles.html?round=two
@@ -11,15 +15,11 @@ brew install stow
 # -------- #
 # Terminal #
 # -------- #
-
+echo "=== installing terminal and tools ==="
 # https://alacritty.org/
 brew install alacritty
 # https://ghostty.org
 brew install ghostty
-
-# system information tool
-# https://github.com/dylanaraps/neofetch
-brew install neofetch
 
 # prompt for shell
 # https://starship.rs/
@@ -40,11 +40,25 @@ git clone https://github.com/tmux-plugins/tpm "$HOME/.dotfiles/tmux/plugins/tpm"
 # tmuxifier
 # git clone https://github.com/jimeh/tmuxifier.git "$HOME/.config/tmuxifier"
 brew install cmatrix
+# system information tool
+# https://github.com/dylanaraps/neofetch
+brew install neofetch
+# https://github.com/ClementTsang/bottom?tab=readme-ov-file#homebrew
+# brew install bottom
+# https://github.com/aristocratos/btop?tab=readme-ov-file#installation
+# brew install btop
 
 # text editor
 # https://neovim.io/
 brew install neovim
+# https://code.visualstudio.com/download
+# vscode
 
+# --- #
+# CLI #
+# --- #
+echo "=== installing cli tools ==="
+brew install watch
 # terminal file manager
 # https://yazi-rs.github.io/
 brew install yazi
@@ -78,22 +92,24 @@ brew install bat
 # https://github.com/charmbracelet/gum
 brew install gum
 
+# https://github.com/charmbracelet/sequin
+# brew install charmbracelet/tap/sequin
+
 # markdown on the CLI
 # https://github.com/charmbracelet/glow
 brew install glow
 
-# --- #
-# CLI #
-# --- #
-brew install watch
 # https://github.com/ouch-org/ouch?tab=readme-ov-file#installation
 brew install ouch
 
-# K8s CLI tool
+# --- #
+# K8s #
+# --- #
+echo "=== installing k8s cli tools ==="
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#install-with-homebrew-on-macos
 brew install kubectl
 brew install kustomize
-brew install derailed/k9s/k9s 
+# brew install derailed/k9s/k9s
 
 # JSON processor
 # https://jqlang.github.io/jq/
@@ -106,7 +122,7 @@ brew install yq
 # --- #
 # GIT #
 # --- #
-
+echo "=== installing git and git tools ==="
 # https://dandavison.github.io/delta/
 brew install git-delta
 # https://github.com/jesseduffield/lazygit
@@ -117,6 +133,7 @@ brew install pre-commit
 # ------ #
 # DevKit #
 # ------ #
+echo "=== installing devkits ==="
 brew install pip
 brew install pipx
 brew install pyenv
@@ -127,6 +144,7 @@ brew install maven
 # ------ #
 # DevOps #
 # ------ #
+echo "=== installing devops tools ==="
 # https://developer.hashicorp.com/terraform/install#darwin
 brew tap hashicorp/tap
 brew install hashicorp/tap/terraform
@@ -137,6 +155,8 @@ brew install awscli
 # containers #
 # ---------- #
 brew install podman
+brew install kind
+brew install kubebuilder
 
 # --------- #
 # DataBases #
@@ -148,6 +168,7 @@ brew install mongosh
 # --------#
 # Network #
 # ------- #
+echo "=== installing network tools ==="
 # dnsmasq
 brew install dnsmasq
 # dig
@@ -156,7 +177,7 @@ brew install bind
 # --- #
 # OSX #
 # --- #
-
+echo "=== installing essential ==="
 # select default applications for document types
 # https://github.com/moretension/duti
 brew install duti
@@ -180,9 +201,28 @@ brew install jordanbaird-ice
 # https://www.mowglii.com/itsycal/
 # Optional
 
+# --------------- #
+# Windows Manager #
+# --------------- #
+echo "=== installing windows manager ==="
+mac install 441258766 # Magent
+
+# https://nikitabobko.github.io/AeroSpace/guide#homebrew-installation
+# brew install --cask nikitabobko/tap/aerospace
+
+# https://github.com/rxhanson/Rectangle
+# brew install --cask rectangle
+
+
+# https://felixkratz.github.io/SketchyBar/setup
+# brew tap FelixKratz/formulae
+# brew install sketchybar
+# brew install borders
+
 # ----- #
 # Theme #
 # ----- #
+echo "=== installing fonts and theme ==="
 # fonts
 brew install font-hack-nerd-font
 brew install font-meslo-lg-nerd-font

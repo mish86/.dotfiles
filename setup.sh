@@ -1,4 +1,42 @@
 #!/bin/bash
+
+# macOS Settings
+# https://macos-defaults.com
+echo "=== changing macOS defaults ==="
+defaults write com.apple.dock autohide -bool true
+defaults write com.apple.dock "mru-spaces" -bool "false"
+defaults write com.apple.dock "expose-group-apps" -bool "true"
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+# required for sketchybar
+# defaults write NSGlobalDomain _HIHideMenuBar -bool true
+defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
+defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
+# defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
+# defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false
+# defaults write com.apple.Finder AppleShowAllFiles -bool true
+# Search the current folder
+defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+# defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+# List view
+defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+defaults write com.apple.finder ShowStatusBar -bool false
+# defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool YES
+
+
+# --------------- #
+# Windows Manager #
+# --------------- #
+# echo "=== setting up windows managers ==="
+# https://felixkratz.github.io/SketchyBar/setup
+# mkdir -p "$HOME/.config/sketchybar/plugins"
+# cp $(brew --prefix)/share/sketchybar/examples/sketchybarrc "$HOME/.config/sketchybar/sketchybarrc"
+# cp -r $(brew --prefix)/share/sketchybar/examples/plugins/ "$HOME/.config/sketchybar/plugins/"
+
+# -------- #
+# Terminal #
+# -------- #
+echo "=== setting up terminal tools ==="
 git clone https://github.com/ndtoan96/ouch.yazi.git "$HOME/.dotfiles/yazi/plugins/ouch.yazi"
 git clone https://github.com/Rolv-Apneseth/starship.yazi.git "$HOME/.dotfiles/yazi/plugins/starship.yazi"
 git clone https://github.com/Lil-Dank/lazygit.yazi.git "$HOME/.dotfiles/yazi/plugins/lazygit.yazi"
@@ -18,6 +56,8 @@ mkdir -p "$HOME/.config/bat"
 stow bat -t "$HOME/.config/bat" --adopt -v
 mkdir -p "$HOME/.config/fzf-git"
 stow fzf-git -t "$HOME/.config/fzf-git" --adopt -v
+# mkdir -p "$HOME/.config/fzf-tab"
+# stow fzf-tab -t "$HOME/.config/fzf-tab" --adopt -v
 mkdir -p "$HOME/.config/lazygit"
 stow lazygit -t "$HOME/.config/lazygit" --adopt -v
 mkdir -p "$HOME/.config/nvim"
@@ -30,14 +70,17 @@ mkdir -p "$HOME/.config/zsh"
 stow zsh -t "$HOME/.config/zsh" --adopt -v
 mkdir -p "$HOME/.config/starship"
 stow starship -t "$HOME/.config/starship" --adopt -v
+# mkdir -p "$HOME/.config/aerospace"
+# stow aerospace -t "$HOME/.config/aerospace" --adopt -v
+# mkdir -p "$HOME/.config/borders"
+# stow borders -t "$HOME/.config/borders" --adopt -v
+# mkdir -p "$HOME/.config/sketchybar"
+# stow sketchybar -t "$HOME/.config/sketchybar" --adopt -v
 mkdir -p "$HOME/.config/k9s"
 stow k9s -t "$HOME/.config/k9s" --adopt -v
 # .zshrc
 stow home -t $HOME --adopt -v
 
-# -------- #
-# Terminal #
-# -------- #
 
 # load tmux config
 tmux start-server
@@ -56,9 +99,17 @@ pipx install argcomplete
 podman pull arangodb/arangodb
 
 # --- #
+# OSX #
+# --- #
+# https://felixkratz.github.io/SketchyBar/setup
+# brew services start sketchybar
+# brew services start borders
+
+# --- #
 # GIT #
 # --- #
 
+echo "=== setting up git config ==="
 # setup git-delta
 # https://github.com/dandavison/delta
 if ! grep -q 'git-delta starts here' "$HOME/.gitconfig"; then
