@@ -104,11 +104,11 @@ keybind = alt+d=text:\x20|
 # ⌥ + ⇧ + d adds a pane below (splits window horizontally)
 keybind = alt+shift+d=text:\x20-
 # ⌥ + w to close vim buffer
-keybind = alt+w=text:\x20\x62d"
+keybind = alt+w=text:\x20\x62d
 # ⌘ + ⌥ + arrows emulates ^ + hjkl
 # NOTE "$HOME/.config/nvim/lua/config/keymaps.lua"
 keybind = cmd+alt+down=text:\x0a
-keybind = cmd+alt+up=text:x0b
+keybind = cmd+alt+up=text:\x0b
 keybind = cmd+alt+left=text:\x08
 keybind = cmd+alt+right=text:\x0c
 # ⌥ + ⇥ and ⌥ + ⇧ + ⇥ for navigate to next and previous buffer
