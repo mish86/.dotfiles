@@ -13,12 +13,12 @@ source "$HOME/.config/zsh/completion.sh"
   # source "$HOME/.config/zsh/iterm2_shell_integration.zsh" || true
 
 # https://github.com/zsh-users/zsh-autosuggestions
-[ -f "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && 
-  source "${HOMEBREW_PREFIX}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && 
+  source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md
-[ -f "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && 
-  source "${HOMEBREW_PREFIX}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+[ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && 
+  source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # https://github.com/junegunn/fzf
 [[ fzf ]] && source "$HOME/.config/zsh/fzf.sh"
