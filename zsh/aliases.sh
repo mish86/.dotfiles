@@ -19,6 +19,8 @@ alias sudo='sudo '
 alias ls='eza'
 alias l='eza --oneline --long --hyperlink'
 alias ll='eza --oneline --long --hyperlink --icons=always --group-directories-first --all --sort=modified'
+alias l='eza --oneline --long'
+alias ll='eza --oneline --long --icons=always --group-directories-first --all'
 
 alias less='less --mouse --wheel-lines=1 --use-color'
 
@@ -50,7 +52,7 @@ alias fvim='nvim $(fzf -m --preview="bat --color=always --style=numbers --line-r
 alias vim='nvim'
 #alias vi='nvim'
 #alias lvim='\vim -c "set nowrap|syntax off"'        # fast vim for big files / big oneliner
-alias vi='\vim -c "set nu" -c "set nowrap|syntax off"'
+# alias vi='\vim -c "set nu" -c "set nowrap|syntax off"'
 
 # +-----+
 # | Git |

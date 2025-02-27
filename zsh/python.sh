@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # python
-export PATH="$(brew --prefix python)/libexec/bin:$PATH"
-# export PATH="${HOMEBREW_PREFIX}/bin/python3:$PATH"
+# export PATH="$(brew --prefix python)/libexec/bin:$PATH"
+export PATH="$(brew --prefix)/bin/python3:$PATH"
 
 # pipx
 # https://pipx.pypa.io/stable/
