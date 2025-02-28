@@ -3,66 +3,66 @@ return {
     "nvim-treesitter/nvim-treesitter",
     opts = { ensure_installed = { "ninja", "rst" } },
   },
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        ruff = {
-          cmd_env = { RUFF_TRACE = "messages" },
-          init_options = {
-            settings = {
-              logLevel = "error",
-            },
-          },
-          keys = {
-            {
-              "<leader>co",
-              LazyVim.lsp.action["source.organizeImports"],
-              desc = "Organize Imports",
-            },
-          },
-        },
-        ruff_lsp = {
-          keys = {
-            {
-              "<leader>co",
-              LazyVim.lsp.action["source.organizeImports"],
-              desc = "Organize Imports",
-            },
-          },
-        },
-      },
-      setup = {
-        [ruff] = function()
-          LazyVim.lsp.on_attach(function(client, _)
-            -- Disable hover in favor of Pyright
-            client.server_capabilities.hoverProvider = false
-          end, ruff)
-        end,
-      },
-    },
-  },
   -- {
   --   "neovim/nvim-lspconfig",
   --   opts = {
   --     servers = {
-  --       pyright = {
-  --         settings = {
-  --           pyright = {
-  --             -- Using Ruff's import organizer
-  --             disableOrganizeImports = true,
+  --       ruff = {
+  --         cmd_env = { RUFF_TRACE = "messages" },
+  --         init_options = {
+  --           settings = {
+  --             logLevel = "error",
   --           },
-  --           python = {
-  --             analysis = {
-  --               -- Ignore all files for analysis to exclusively use Ruff for linting
-  --               ignore = { "*" },
-  --             },
+  --         },
+  --         keys = {
+  --           {
+  --             "<leader>co",
+  --             LazyVim.lsp.action["source.organizeImports"],
+  --             desc = "Organize Imports",
+  --           },
+  --         },
+  --       },
+  --       ruff_lsp = {
+  --         keys = {
+  --           {
+  --             "<leader>co",
+  --             LazyVim.lsp.action["source.organizeImports"],
+  --             desc = "Organize Imports",
   --           },
   --         },
   --       },
   --     },
+  --     setup = {
+  --       [ruff] = function()
+  --         LazyVim.lsp.on_attach(function(client, _)
+  --           -- Disable hover in favor of Pyright
+  --           client.server_capabilities.hoverProvider = false
+  --         end, ruff)
+  --       end,
+  --     },
   --   },
   -- },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        pyright = {
+          settings = {
+            pyright = {
+              -- Using Ruff's import organizer
+              disableOrganizeImports = true,
+            },
+            python = {
+              analysis = {
+                -- Ignore all files for analysis to exclusively use Ruff for linting
+                ignore = { "*" },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
   {
     "nvim-neotest/neotest-python",
   },
