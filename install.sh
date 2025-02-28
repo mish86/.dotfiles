@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # brew
-[ ! -d "$(brew --prefix)" ] && \
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+[ ! -d "$(brew --prefix)" ] &&
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 # https://github.com/mas-cli/mas
 brew install mas
 
@@ -127,6 +127,7 @@ echo "=== installing git and git tools ==="
 brew install git-delta
 # https://github.com/jesseduffield/lazygit
 brew install lazygit
+brew install lazydocker
 # https://pre-commit.com/
 brew install pre-commit
 
@@ -164,6 +165,8 @@ brew install kubebuilder
 brew install mongosh
 # podman pull arangodb/arangodb
 # podman run --rm -it arangodb/arangodb:latest arangosh
+brew install --cask dbeaver-community
+brew install --cask studio-3t
 
 # ------ #
 # DevOps #
@@ -182,6 +185,15 @@ echo "=== installing network tools ==="
 brew install dnsmasq
 # dig
 brew install bind
+# HTTP load generator
+# https://github.com/rakyll/hey
+brew install hey
+
+# ------------ #
+# UI dev tools #
+# ------------ #
+
+# https://code.visualstudio.com/docs/setup/mac
 
 # --- #
 # OSX #
@@ -196,7 +208,8 @@ brew install duti
 brew install stats
 
 # https://github.com/MonitorControl/MonitorControl
-brew install MonitorControl
+# brew install MonitorControl
+# https://lunar.fyi/
 
 # https://github.com/tarutin/hovrly
 brew install hovrly
@@ -210,6 +223,9 @@ brew install jordanbaird-ice
 # https://www.mowglii.com/itsycal/
 # Optional
 
+# https://www.caffeine-app.net/
+brew install caffeine
+
 # --------------- #
 # Windows Manager #
 # --------------- #
@@ -221,7 +237,6 @@ mac install 441258766 # Magent
 
 # https://github.com/rxhanson/Rectangle
 # brew install --cask rectangle
-
 
 # https://felixkratz.github.io/SketchyBar/setup
 # brew tap FelixKratz/formulae

@@ -56,8 +56,6 @@ mkdir -p "$HOME/.config/bat"
 stow bat -t "$HOME/.config/bat" --adopt -v
 mkdir -p "$HOME/.config/fzf-git"
 stow fzf-git -t "$HOME/.config/fzf-git" --adopt -v
-# mkdir -p "$HOME/.config/fzf-tab"
-# stow fzf-tab -t "$HOME/.config/fzf-tab" --adopt -v
 mkdir -p "$HOME/.config/lazygit"
 stow lazygit -t "$HOME/.config/lazygit" --adopt -v
 mkdir -p "$HOME/.config/nvim"
@@ -72,10 +70,6 @@ mkdir -p "$HOME/.config/starship"
 stow starship -t "$HOME/.config/starship" --adopt -v
 # mkdir -p "$HOME/.config/aerospace"
 # stow aerospace -t "$HOME/.config/aerospace" --adopt -v
-# mkdir -p "$HOME/.config/borders"
-# stow borders -t "$HOME/.config/borders" --adopt -v
-# mkdir -p "$HOME/.config/sketchybar"
-# stow sketchybar -t "$HOME/.config/sketchybar" --adopt -v
 mkdir -p "$HOME/.config/k9s"
 stow k9s -t "$HOME/.config/k9s" --adopt -v
 # .zshrc
