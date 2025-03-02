@@ -3,4 +3,5 @@ yazi/flavors
 yazi/plugins
 fzf-git
 catppuccin
-
+.vscode
+.DS_Store
