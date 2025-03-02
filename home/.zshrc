@@ -39,9 +39,9 @@ source "$HOME/.config/yazi/yazi_scripts.sh"
 source "$HOME/.config/zsh/kube.sh"
 source "$HOME/.config/zsh/python.sh"
 source "$HOME/.config/zsh/go.sh"
+source "$HOME/.config/zsh/azure_cli.sh"
 
 # https://github.com/ryanoasis/nerd-fonts/releases
 [[ starship ]] && \
   export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml" && \
   eval "$(starship init zsh)"
-
