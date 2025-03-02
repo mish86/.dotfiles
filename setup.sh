@@ -1,29 +1,5 @@
 #!/bin/bash
 
-# macOS Settings
-# https://macos-defaults.com
-echo "=== changing macOS defaults ==="
-defaults write com.apple.dock autohide -bool true
-defaults write com.apple.dock "mru-spaces" -bool "false"
-defaults write com.apple.dock "expose-group-apps" -bool "true"
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true
-# required for sketchybar
-# defaults write NSGlobalDomain _HIHideMenuBar -bool true
-defaults write com.apple.finder ShowExternalHardDrivesOnDesktop -bool false
-defaults write com.apple.finder ShowHardDrivesOnDesktop -bool false
-# defaults write com.apple.finder ShowMountedServersOnDesktop -bool false
-# defaults write com.apple.finder ShowRemovableMediaOnDesktop -bool false
-# defaults write com.apple.Finder AppleShowAllFiles -bool true
-# Search the current folder
-defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
-defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
-# defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
-# List view
-defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
-defaults write com.apple.finder ShowStatusBar -bool false
-# defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool YES
-
-
 # --------------- #
 # Windows Manager #
 # --------------- #
