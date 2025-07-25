@@ -1,6 +1,6 @@
-[manager]
+[mgr]
 show_hidden = true
-linemode = "size_and_permissions"
+linemode = "size_and_mtime"
 
 [plugin]
 prepend_previewers = [
