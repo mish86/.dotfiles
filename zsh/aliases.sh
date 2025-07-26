@@ -4,6 +4,9 @@
 # allow use aliases with sudo
 alias sudo='sudo '
 
+# watch with proper quoting for complex commands
+alias watch='watch -d -n 1 '
+
 # +-----+
 # | Zsh |
 # +-----+
@@ -19,8 +22,8 @@ alias sudo='sudo '
 alias ls='eza'
 alias l='eza --oneline --long --hyperlink'
 alias ll='eza --oneline --long --hyperlink --icons=always --group-directories-first --all --sort=modified'
-alias l='eza --oneline --long'
-alias ll='eza --oneline --long --icons=always --group-directories-first --all'
+# alias l='eza --oneline --long'
+# alias ll='eza --oneline --long --icons=always --group-directories-first --all'
 
 alias less='less --mouse --wheel-lines=1 --use-color'
 

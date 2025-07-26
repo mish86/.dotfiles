@@ -125,7 +125,7 @@ symbol = " "
 
 [kubernetes]
 disabled = false
-format = 'on [$symbol$context]($style) '
+format = 'on [$symbol$cluster:$namespace]($style) '
 style = 'bold blue'
 
 [lua]
