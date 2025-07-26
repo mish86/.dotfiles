@@ -15,3 +15,8 @@ ctx() {
     :
   fi
 }
+
+# https://github.com/vkhitrin/kubecolor-catppuccin
+# KUBECOLOR_CONFIG
+export KUBECOLOR_CONFIG=" ~/.config/catppuccin/kubecolor-catppuccin/catppuccin-macchiato.yaml"
+# export KUBECOLOR_CONFIG="$HOME/.config/catppuccin/kubecolor-catppuccin/catppuccin-latte.yaml"

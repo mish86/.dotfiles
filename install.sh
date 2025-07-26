@@ -108,6 +108,8 @@ brew install ouch
 echo "=== installing k8s cli tools ==="
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#install-with-homebrew-on-macos
 brew install kubectl
+# https://kubecolor.github.io/setup/install/
+brew install kubecolor
 brew install kustomize
 # brew install derailed/k9s/k9s
 
