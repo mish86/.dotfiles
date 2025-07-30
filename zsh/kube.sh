@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/bin/bash
 
 # Kubernetes utilities with fzf integration
 # Dependencies: kubectl, fzf, completion.sh
@@ -16,6 +16,17 @@ fi
 
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-macos/#enable-shell-autocompletion
 source <(kubectl completion zsh)
+
+# Kubecolor configuration
+# https://github.com/vkhitrin/kubecolor-catppuccin
+export KUBECOLOR_CONFIG="$HOME/.config/catppuccin/kubecolor-catppuccin/catppuccin-latte.yaml"
+
+# Optional: Create aliases for kubecolor if available
+if command -v kubecolor &> /dev/null; then
+    alias k='kubecolor'
+    alias kubectl='kubecolor'
+    compdef kubecolor=kubectl
+fi
 
 # Helper function to select a resource with fzf
 # Usage: _k8s_select_resource <resource_type> <prefix_pattern> <kubectl_options> [multi]
@@ -119,25 +130,65 @@ kns() {
     fi
 }
 
-# Get pod YAML
-kpody() {
-    kgety pods
-}
+# Generic function to get any resource type
+_kget_resource() {
+    local kubectl_cmd=()
 
-# Get pod JSON
-kpodj() {
-    kgetj pods
-}
-
-# Helper function for listing pods with optional label selector and output format
-_kpod_list() {
-    local output_format="$1"
+    # mandatory
+    local operation="${1:-get}"
+    kubectl_cmd+=("$operation")
     shift
-    local label_selector=""
-    local function_name="${output_format:+kpodw}"
-    function_name="${function_name:-kpod}"
+
+    # mandatory
+    local output_format="$1"
+    if [[ -n "$output_format" ]]; then
+        kubectl_cmd+=("-o" "$output_format")
+        # shift if output_format is provided
+    fi
+    shift
     
-    # Parse options
+    # optional
+    local resource_type="$1"
+    # skip if resource_type starts with '-'
+    if [[ "$resource_type" == -* ]]; then
+        resource_type=""
+    elif [[ -n "$resource_type" ]]; then
+        # shift if resource_type is provided
+        shift
+    fi
+
+    if [[ "$resource_type" == "all" ]]; then
+        kubectl_cmd+=("$resource_type")
+
+        echo "Running command: kubectl ${kubectl_cmd[@]} $@"
+        kubectl "${kubectl_cmd[@]}" "$@"
+        return "$?"
+    fi
+
+    # optional
+    local resource_name="$1"
+    # skip if resource_name starts with '-'
+    if [[ "$resource_name" == -* ]]; then
+        resource_name=""
+    elif [[ -n "$resource_name" ]]; then
+        # shift if resource_name is provided
+        shift
+    fi
+
+    if [[ "$resource_type" == */* ]]; then
+        local parts=$resource_type
+        resource_type=$(dirname "$parts")
+        resource_name=$(basename "$parts")
+    fi
+
+    # optional label selector
+    local label_selector=""
+
+    # echo "resource_type: $resource_type"
+    # echo "resource_name: $resource_name"
+    # echo "Remaining arguments: $@"
+
+    # Parse optional flags
     while [[ $# -gt 0 ]]; do
         case $1 in
             -l|--selector)
@@ -159,62 +210,121 @@ _kpod_list() {
                 ;;
             *)
                 echo "Error: Unknown option $1" >&2
-                echo "Usage: $function_name [-l|--selector <label_selector>]" >&2
+                echo "Usage: $0 [-l|--selector <label_selector>]" >&2
                 return 1
                 ;;
         esac
     done
     
-    # Build kubectl command
-    local kubectl_cmd="kubectl get pods"
-    if [[ -n "$output_format" ]]; then
-        kubectl_cmd="$kubectl_cmd -o $output_format"
+    # If no resource type provided, let user select with fzf
+    if [[ -z "$resource_type" ]]; then
+        # Get all available resource types from the cluster
+        local resource_types
+        if ! resource_types=$(kubectl api-resources --output=name 2>/dev/null | sort); then
+            echo "Error: Failed to get available resource types" >&2
+            return 1
+        fi
+        
+        if [[ -z "$resource_types" ]]; then
+            echo "No resource types found" >&2
+            return 1
+        fi
+        
+        resource_type=$(echo "$resource_types" | fzf --prompt="Select resource type: " --height=20)
+        
+        if [[ -z "$resource_type" ]]; then
+            echo "No resource type selected"
+            return 1
+        fi
     fi
-    if [[ -n "$label_selector" ]]; then
-        kubectl_cmd="$kubectl_cmd -l \"$label_selector\""
-    fi
+    kubectl_cmd+=("$resource_type")
     
-    eval "$kubectl_cmd"
+    # if label_selector is provided use it
+    # otherwise, if resource_name is not provided, let user select with fzf
+    if [[ -n "$label_selector" ]]; then
+        kubectl_cmd+=("-l" "$label_selector")
+    elif [[ -n "$resource_name" ]]; then
+        kubectl_cmd+=("$resource_name")
+    elif [[ -z "$resource_name" ]]; then
+        if ! resource_name=$(_k8s_select_resource "$resource_type" "" ""); then
+            echo "No resource selected"
+            return 1
+        fi
+        kubectl_cmd+=("$resource_name")
+    fi
+
+    echo "Running command: kubectl ${kubectl_cmd[@]} $@"
+    kubectl "${kubectl_cmd[@]}" "$@"
 }
 
-# List pods
-kpod() {
-    _kpod_list "" "$@"
+# Get any resource type in any format
+kgety() {
+    _kget_resource "get" "yaml" "$@"
 }
 
-# List pods with wide output
+kgetj() {
+    _kget_resource "get" "json" "$@"
+}
+
+kgetw() {
+    _kget_resource "get" "wide" "$@"
+}
+
+kget() {
+    _kget_resource "get" "" "$@"
+}
+
+# Describe any resource type
+kdesc() {
+    _kget_resource "describe" "" "$@"
+}
+
+# Get pod YAML
+kpody() {
+    _kget_resource get yaml pods "$@"
+}
+
+# Get pod JSON
+kpodj() {
+    _kget_resource get json pods "$@"
+}
+
 kpodw() {
-    _kpod_list "wide" "$@"
+    _kget_resource get wide pods "$@"
+}
+
+kpod() {
+    _kget_resource get "" pods "$@"
 }
 
 # Get deployment YAML
 kdeployy() {
-    kgety deployments
+    kgety deployments "$@"
 }
 
 # Get deployment JSON
 kdeployj() {
-    kgetj deployments
+    kgetj deployments "$@"
 }
 
 # Get configmap YAML
 kcmy() {
-    kgety configmaps
+    kgety configmaps "$@"
 }
 
 # Get configmap JSON
 kcmj() {
-    kgetj configmaps
+    kgetj configmaps "$@"
 }
 
 # Get secret YAML
 ksecy() {
-    kgety secrets
+    kgety secrets "$@"
 }
 
 # Get secret JSON
 ksecj() {
-    kgetj secrets
+    kgetj secrets "$@"
 }
 
 # Get secret data decoded (base64 decoded)
@@ -228,114 +338,6 @@ ksecd() {
     
     # Use the generic JSON function and pipe to jq for decoding
     kgetj secrets | jq '.data | map_values(@base64d)'
-}
-
-# Get any resource type in YAML format (generic function)
-kgety() {
-    local resource_type="$1"
-    
-    # If no resource type provided, let user select with fzf
-    if [[ -z "$resource_type" ]]; then
-        # Get all available resource types from the cluster
-        local resource_types
-        if ! resource_types=$(kubectl api-resources --output=name 2>/dev/null | sort); then
-            echo "Error: Failed to get available resource types" >&2
-            return 1
-        fi
-        
-        if [[ -z "$resource_types" ]]; then
-            echo "No resource types found" >&2
-            return 1
-        fi
-        
-        resource_type=$(echo "$resource_types" | fzf --prompt="Select resource type: " --height=20)
-        
-        if [[ -z "$resource_type" ]]; then
-            echo "No resource type selected"
-            return 1
-        fi
-    fi
-    
-    local resource_name
-    if ! resource_name=$(_k8s_select_resource "$resource_type" "" ""); then
-        return 1
-    fi
-    
-    if [[ -n "$resource_name" ]]; then
-        kubectl get "$resource_type" "$resource_name" -o yaml
-    fi
-}
-
-# Get any resource type in JSON format (generic function)
-kgetj() {
-    local resource_type="$1"
-    
-    # If no resource type provided, let user select with fzf
-    if [[ -z "$resource_type" ]]; then
-        # Get all available resource types from the cluster
-        local resource_types
-        if ! resource_types=$(kubectl api-resources --output=name 2>/dev/null | sort); then
-            echo "Error: Failed to get available resource types" >&2
-            return 1
-        fi
-        
-        if [[ -z "$resource_types" ]]; then
-            echo "No resource types found" >&2
-            return 1
-        fi
-        
-        resource_type=$(echo "$resource_types" | fzf --prompt="Select resource type: " --height=20)
-        
-        if [[ -z "$resource_type" ]]; then
-            echo "No resource type selected"
-            return 1
-        fi
-    fi
-    
-    local resource_name
-    if ! resource_name=$(_k8s_select_resource "$resource_type" "" ""); then
-        return 1
-    fi
-    
-    if [[ -n "$resource_name" ]]; then
-        kubectl get "$resource_type" "$resource_name" -o json
-    fi
-}
-
-# Describe any resource type
-kdesc() {
-    local resource_type="$1"
-    
-    # If no resource type provided, let user select with fzf
-    if [[ -z "$resource_type" ]]; then
-        # Get all available resource types from the cluster
-        local resource_types
-        if ! resource_types=$(kubectl api-resources --output=name 2>/dev/null | sort); then
-            echo "Error: Failed to get available resource types" >&2
-            return 1
-        fi
-        
-        if [[ -z "$resource_types" ]]; then
-            echo "No resource types found" >&2
-            return 1
-        fi
-        
-        resource_type=$(echo "$resource_types" | fzf --prompt="Select resource type: " --height=20)
-        
-        if [[ -z "$resource_type" ]]; then
-            echo "No resource type selected"
-            return 1
-        fi
-    fi
-    
-    local resource_name
-    if ! resource_name=$(_k8s_select_resource "$resource_type" "" ""); then
-        return 1
-    fi
-    
-    if [[ -n "$resource_name" ]]; then
-        kubectl describe "$resource_type" "$resource_name"
-    fi
 }
 
 # Edit any resource type
@@ -682,14 +684,11 @@ ksvcport() {
     fi
 }
 
+alias krestarts='kubectl get pods --no-headers --sort-by='\''.status.containerStatuses[0].restartCount'\'' | awk '\''$4>0'\'''
+
 # +---------+
 # | kubectl |
 # +---------+
-
-# # use colorized kubectl output
-# alias kubectl='kubecolor'
-# # shortcut for kubectl
-# alias k='kubectl'
 
 # Execute a kubectl command against all namespaces
 alias kca='f(){ kubectl "$@" --all-namespaces;  unset -f f; }; f'
@@ -720,8 +719,14 @@ alias kgpw='kubectl get pod -o wide'
 alias kgpj='kubectl get pod -o json'
 alias kgpy='kubectl get pod -o yaml'
 # alias kep='kubectl edit pods'
-alias kdp='kubectl describe pods'
 alias kdp='kubectl delete pods'
+
+alias kgjob='kubectl get jobs'
+alias kgjobw='kubectl get jobs -o wide'
+alias kgjobj='kubectl get jobs -o json'
+alias kgjoby='kubectl get jobs -o yaml'
+alias kej='kubectl edit jobs'
+alias kdj='kubectl delete jobs'
 
 # get pod by label: kgpl "app=myapp" -n myns
 alias kgpl='kubectl get pod -l'
@@ -732,15 +737,19 @@ alias kgpip='kubectl get pod -A --no-headers -o custom-columns=":metadata.namesp
 
 alias kge='kubectl get events --sort-by=.lastTimestamp'
 
+alias kgep='kubectl get ep'
+alias kgepw='kubectl get ep -o wide'
+alias kgepj='kubectl get ep -o json'
+alias kgepy='kubectl get ep -o yaml'
+
 # Service management.
-alias kgs='kubectl get svc'
+alias kgsvc='kubectl get svc'
 # alias kgsw='kgs --watch'
-alias kgsw='kubectl get svc -o wide'
-alias kgsj='kubectl get svc -o json'
-alias kgsy='kubectl get svc -o yaml'
-alias kes='kubectl edit svc'
-alias kds='kubectl describe svc'
-alias kds='kubectl delete svc'
+alias kgsvcw='kubectl get svc -o wide'
+alias kgsvcj='kubectl get svc -o json'
+alias kgsvcy='kubectl get svc -o yaml'
+alias kesvc='kubectl edit svc'
+alias kdsvc='kubectl delete svc'
 
 # Ingress management
 alias kgi='kubectl get ingress'
@@ -748,13 +757,14 @@ alias kgiw='kubectl get ingress -o wide'
 alias kgij='kubectl get ingress -o json'
 alias kgiy='kubectl get ingress -o yaml'
 alias kei='kubectl edit ingress'
-alias kdi='kubectl describe ingress'
 alias kdi='kubectl delete ingress'
 
 # Namespace management
 alias kgns='kubectl get namespaces'
+alias kgnsj='kubectl get namespaces -o json'
+alias kgnsy='kubectl get namespaces -o yaml'
+alias kgnsw='kubectl get namespaces -o wide'
 alias kens='kubectl edit namespace'
-alias kdns='kubectl describe namespace'
 alias kdns='kubectl delete namespace'
 # alias kcn='kubectl config set-context $(kubectl config current-context) --namespace'
 
@@ -764,7 +774,6 @@ alias kgcmw='kubectl get configmaps -o wide'
 alias kgcmj='kubectl get configmaps -o json'
 alias kgcmy='kubectl get configmaps -o yaml'
 alias kecm='kubectl edit configmap'
-alias kdcm='kubectl describe configmap'
 alias kdcm='kubectl delete configmap'
 
 # Secret management
@@ -773,7 +782,6 @@ alias kgsecw='kubectl get secret -o wide'
 alias kgsecj='kubectl get secret -o json'
 alias kgsecy='kubectl get secret -o yaml'
 alias kesec='kubectl edit secret'
-alias kdsec='kubectl describe secret'
 alias kdsec='kubectl delete secret'
 
 # Deployment management.
@@ -783,7 +791,6 @@ alias kgdw='kubectl get deployment -o wide'
 alias kgdj='kubectl get deployment -o json'
 alias kgdy='kubectl get deployment -o yaml'
 alias ked='kubectl edit deployment'
-alias kdd='kubectl describe deployment'
 alias kdd='kubectl delete deployment'
 alias ksd='kubectl scale deployment'
 alias krsd='kubectl rollout status deployment'
@@ -826,14 +833,5 @@ alias kgnoy='kubectl get nodes -o yaml'
 # get resource in yaml or json format
 alias kgy='kubectl get -o yaml'
 alias kgj='kubectl get -o json'
-
-
-# Kubecolor configuration
-# https://github.com/vkhitrin/kubecolor-catppuccin
-export KUBECOLOR_CONFIG="$HOME/.config/catppuccin/kubecolor-catppuccin/catppuccin-latte.yaml"
-
-# Optional: Create aliases for kubecolor if available
-if command -v kubecolor &> /dev/null; then
-    alias k='kubecolor'
-    alias kubectl='kubecolor'
-fi
+alias kgw='kubectl get -o wide'
+alias kgall='kubectl get all'
