@@ -15,6 +15,11 @@ alias watch='watch -d -n 5 '
 # alias d='dirs -v'
 # for index ({1..9}) alias "$index"="cd +${index} > /dev/null"; unset index # directory stack
 
+# quick navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
 # +----+
 # | ls |
 # +----+
