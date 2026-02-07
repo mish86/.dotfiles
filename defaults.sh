@@ -11,7 +11,7 @@ echo '=== Dock ==='
 # active single app mode
 defaults write com.apple.Dock single-app -bool true
 # set icon size to 80 pixels
-defaults write com.apple.Dock tilesize -int 80
+defaults write com.apple.Dock tilesize -int 64
 # disable auto hide
 defaults write com.apple.Dock autohide -bool false
 # position bottom

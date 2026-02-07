@@ -19,7 +19,8 @@ source <(kubectl completion zsh)
 
 # Kubecolor configuration
 # https://github.com/vkhitrin/kubecolor-catppuccin
-export KUBECOLOR_CONFIG="$HOME/.config/catppuccin/kubecolor-catppuccin/catppuccin-latte.yaml"
+# export KUBECOLOR_CONFIG="$HOME/.config/catppuccin/kubecolor-catppuccin/catppuccin-macchiato.yaml"
+export KUBECOLOR_CONFIG="$HOME/.config/catppuccin/kubecolor-catppuccin/catppuccin-frappe.yaml"
 
 # Optional: Create aliases for kubecolor if available
 if command -v kubecolor &> /dev/null; then
@@ -29,40 +30,51 @@ if command -v kubecolor &> /dev/null; then
 fi
 
 # Helper function to select a resource with fzf
-# Usage: _k8s_select_resource <resource_type> <prefix_pattern> <kubectl_options> [multi]
+# Usage: _k8s_select_resource <resource_type> <prefix_pattern> <kubectl_options> [multi] [operation]
 _k8s_select_resource() {
     local resource_type="$1"
     local prefix_pattern="$2"
     local options="$3"
     local multi_select="$4"
-    
+    local operation="${5:-select}"
+    # upper case the first letter of operation
+    operation="$(tr '[:lower:]' '[:upper:]' <<< ${operation:0:1})${operation:1}"
+
     if [[ -z "$resource_type" ]]; then
         echo "Error: resource type is required" >&2
         return 1
     fi
     
-    local resource_list
-    if ! resource_list=$(kubectl get "$resource_type" $options -o name 2>/dev/null); then
-        echo "Error: Failed to get $resource_type list" >&2
+
+    # Get resource name and status columns for fzf preview
+    local resource_info
+    local custom_columns="NAME:.metadata.name,STATUS:.status.phase"
+    if [[ "$resource_type" == pod* ]]; then
+        custom_columns="NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[*].ready"
+    elif [[ "$resource_type" == deployment* ]]; then
+        custom_columns="NAME:.metadata.name,READY:.status.readyReplicas,REPLICAS:.status.replicas"
+    fi
+    if ! resource_info=$(kubectl get "$resource_type" $options --no-headers -o custom-columns="$custom_columns" 2>/dev/null); then
+        echo "Error: Failed to get $resource_type info" >&2
         return 1
     fi
-    
-    if [[ -z "$resource_list" ]]; then
+
+    if [[ -z "$resource_info" ]]; then
         echo "No $resource_type found in current namespace" >&2
         return 1
     fi
-    
+
     # Build fzf arguments based on multi-select option
     local fzf_args=()
-    local prompt_text="Select $resource_type: "
-    
+    local prompt_text="$operation $resource_type: "
+
     if [[ "$multi_select" == "multi" ]]; then
         fzf_args+=(--multi)
-        prompt_text="Select $resource_type (TAB for multiple): "
+        prompt_text="$operation $resource_type (TAB for multiple): "
     fi
-    
+
     fzf_args+=(--prompt="$prompt_text")
-    
+
     # If kubectl options contain a label selector, preselect all resources
     local preselect_all=false
     if [[ "$options" =~ -l[[:space:]] ]] || [[ "$options" =~ --selector ]]; then
@@ -73,26 +85,15 @@ _k8s_select_resource() {
             fzf_args[${#fzf_args[@]}-1]="--prompt=$prompt_text"
         fi
     fi
-    
+
+    # Show name and status in fzf, but return only the name
     local selected
-    if [[ -n "$prefix_pattern" ]]; then
-        # Use provided prefix pattern
-        if [[ "$preselect_all" == true && "$multi_select" == "multi" ]]; then
-            # For label selectors with multi-select, select all by default
-            selected=$(echo "$resource_list" | sed "s|^$prefix_pattern||" | fzf "${fzf_args[@]}" --bind="start:select-all")
-        else
-            selected=$(echo "$resource_list" | sed "s|^$prefix_pattern||" | fzf "${fzf_args[@]}")
-        fi
+    if [[ "$preselect_all" == true && "$multi_select" == "multi" ]]; then
+        selected=$(echo "$resource_info" | fzf "${fzf_args[@]}" --bind="start:select-all" | awk '{print $1}')
     else
-        # Auto-detect and remove prefix (everything before the first '/')
-        if [[ "$preselect_all" == true && "$multi_select" == "multi" ]]; then
-            # For label selectors with multi-select, select all by default
-            selected=$(echo "$resource_list" | sed 's|^[^/]*/||' | fzf "${fzf_args[@]}" --bind="start:select-all")
-        else
-            selected=$(echo "$resource_list" | sed 's|^[^/]*/||' | fzf "${fzf_args[@]}")
-        fi
+        selected=$(echo "$resource_info" | fzf "${fzf_args[@]}" | awk '{print $1}')
     fi
-    
+
     echo "$selected"
 }
 
@@ -120,7 +121,7 @@ kctx() {
 # Switch namespace
 kns() {
     local namespace
-    if ! namespace=$(_k8s_select_resource "namespaces" "namespace/" ""); then
+    if ! namespace=$(_k8s_select_resource "namespaces" "namespace/" "" "" "select"); then
         return 1
     fi
     
@@ -131,7 +132,7 @@ kns() {
 }
 
 # Generic function to get any resource type
-_kget_resource() {
+_koperation_resource() {
     local kubectl_cmd=()
 
     # mandatory
@@ -188,6 +189,9 @@ _kget_resource() {
     # echo "resource_name: $resource_name"
     # echo "Remaining arguments: $@"
 
+    # used in _k8s_select_resource
+    local kubectl_options=()
+
     # Parse optional flags
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -206,6 +210,16 @@ _kget_resource() {
                     echo "Error: --selector requires a label selector (e.g., app=myapp)" >&2
                     return 1
                 fi
+                shift
+                ;;
+            -A|--all-namespaces)
+                kubectl_cmd+=("--all-namespaces")
+                kubectl_options+=("--all-namespaces")
+                shift
+                ;;
+            --show-labels)
+                kubectl_cmd+=("--show-labels")
+                kubectl_options+=("--show-labels")
                 shift
                 ;;
             *)
@@ -243,58 +257,71 @@ _kget_resource() {
     # otherwise, if resource_name is not provided, let user select with fzf
     if [[ -n "$label_selector" ]]; then
         kubectl_cmd+=("-l" "$label_selector")
-    elif [[ -n "$resource_name" ]]; then
-        kubectl_cmd+=("$resource_name")
-    elif [[ -z "$resource_name" ]]; then
-        if ! resource_name=$(_k8s_select_resource "$resource_type" "" ""); then
+        echo "Running command: kubectl ${kubectl_cmd[@]} $@" >&2
+        kubectl "${kubectl_cmd[@]}" "$@"
+        return "$?"      
+    elif [[ -z "$resource_name" && "$resource_type" != node* ]]; then
+        local multi_select=""
+        if [[ "$operation" != "edit" ]]; then
+            multi_select="multi"
+        fi
+        if ! resource_name=$(_k8s_select_resource "$resource_type" "" "$kubectl_options" "$multi_select" "$operation"); then
             echo "No resource selected"
             return 1
         fi
-        kubectl_cmd+=("$resource_name")
     fi
 
-    echo "Running command: kubectl ${kubectl_cmd[@]} $@"
-    kubectl "${kubectl_cmd[@]}" "$@"
+    # If multiple resources selected (newline separated), run for each
+    local resource_names=()
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && resource_names+=("$line")
+    done <<< "$resource_name"
+    for name in "${resource_names[@]}"; do
+        local cmd=("${kubectl_cmd[@]}")
+        cmd+=("$name")
+        echo "Running command: kubectl ${cmd[@]} $@" >&2
+        kubectl "${cmd[@]}" "$@"
+    done
 }
 
 # Get any resource type in any format
 kgety() {
-    _kget_resource "get" "yaml" "$@"
+    _koperation_resource "get" "yaml" "$@"
 }
 
 kgetj() {
-    _kget_resource "get" "json" "$@"
+    _koperation_resource "get" "json" "$@"
 }
 
 kgetw() {
-    _kget_resource "get" "wide" "$@"
+    _koperation_resource "get" "wide" "$@"
 }
 
 kget() {
-    _kget_resource "get" "" "$@"
+    _koperation_resource "get" "" "$@"
 }
 
 # Describe any resource type
 kdesc() {
-    _kget_resource "describe" "" "$@"
+    _koperation_resource "describe" "" "$@"
 }
 
 # Get pod YAML
 kpody() {
-    _kget_resource get yaml pods "$@"
+    _koperation_resource get yaml pods "$@"
 }
 
 # Get pod JSON
 kpodj() {
-    _kget_resource get json pods "$@"
+    _koperation_resource get json pods "$@"
 }
 
 kpodw() {
-    _kget_resource get wide pods "$@"
+    _koperation_resource get wide pods "$@"
 }
 
 kpod() {
-    _kget_resource get "" pods "$@"
+    _koperation_resource get "" pods "$@"
 }
 
 # Get deployment YAML
@@ -337,49 +364,25 @@ ksecd() {
     fi
     
     # Use the generic JSON function and pipe to jq for decoding
-    kgetj secrets | jq '.data | map_values(@base64d)'
+    ksecj | jq '.data | map_values(@base64d)'
 }
 
 # Edit any resource type
 kedit() {
-    local resource_type="$1"
-    
-    # If no resource type provided, let user select with fzf
-    if [[ -z "$resource_type" ]]; then
-        # Get all available resource types from the cluster
-        local resource_types
-        if ! resource_types=$(kubectl api-resources --output=name 2>/dev/null | sort); then
-            echo "Error: Failed to get available resource types" >&2
-            return 1
-        fi
-        
-        if [[ -z "$resource_types" ]]; then
-            echo "No resource types found" >&2
-            return 1
-        fi
-        
-        resource_type=$(echo "$resource_types" | fzf --prompt="Select resource type: " --height=20)
-        
-        if [[ -z "$resource_type" ]]; then
-            echo "No resource type selected"
-            return 1
-        fi
-    fi
-    
-    local resource_name
-    if ! resource_name=$(_k8s_select_resource "$resource_type" "" ""); then
-        return 1
-    fi
-    
-    if [[ -n "$resource_name" ]]; then
-        kubectl edit "$resource_type" "$resource_name"
-    fi
+    _koperation_resource "edit" "" "$@"
 }
+
+# Edit any resource type
+kdel() {
+    _koperation_resource "delete" "" "$@"
+}
+
 
 # Get logs from a pod (supports multi-selection with TAB)
 klogs() {
     local save_to_file=false
     local follow=false
+    local previous=false
     local tail_lines=""
     local since=""
     local since_time=""
@@ -395,6 +398,10 @@ klogs() {
                 ;;
             -f|--follow)
                 follow=true
+                shift
+                ;;
+            -p|--previous)
+                previous=true
                 shift
                 ;;
             -l|--selector)
@@ -484,7 +491,7 @@ klogs() {
     fi
     
     local selected_pods
-    if ! selected_pods=$(_k8s_select_resource "pods" "pod/" "$kubectl_options" "$multi_mode"); then
+    if ! selected_pods=$(_k8s_select_resource "pods" "pod/" "$kubectl_options" "$multi_mode" "log"); then
         return 1
     fi
     
@@ -503,43 +510,61 @@ klogs() {
         for pod in "${pods_array[@]}"; do
             echo "\n[${current_pod}/${pod_count}] Processing pod: $pod"
             
-            # Check if pod has multiple containers
-            local containers
-            containers=$(kubectl get pod "$pod" -o jsonpath='{.spec.containers[*].name}' 2>/dev/null)
-            local container_count=$(echo "$containers" | wc -w)
-            
-            local container_flag=""
-            local container_name=""
-            if [[ $container_count -gt 1 ]]; then
-                local container
-                container=$(echo "$containers" | tr ' ' '\n' | fzf --prompt="Select container for pod $pod: ")
-                if [[ -n "$container" ]]; then
+            # Get all containers (init + regular containers) and handle newlines properly
+            local all_containers=()
+            local init_containers_raw
+            local containers_raw
+            init_containers_raw=$(kubectl get pod "$pod" -o jsonpath='{.spec.initContainers[*].name}' 2>/dev/null)
+            containers_raw=$(kubectl get pod "$pod" -o jsonpath='{.spec.containers[*].name}' 2>/dev/null)
+
+            # Convert space-separated to newline-separated, then read into array
+            if [[ -n "$init_containers_raw" ]]; then
+                while IFS= read -r container; do
+                    [[ -n "$container" ]] && all_containers+=("$container")
+                done < <(echo "$init_containers_raw" | tr ' ' '\n')
+            fi
+            if [[ -n "$containers_raw" ]]; then
+                while IFS= read -r container; do
+                    [[ -n "$container" ]] && all_containers+=("$container")
+                done < <(echo "$containers_raw" | tr ' ' '\n')
+            fi
+
+            # Save logs for each container automatically
+            local container_count=${#all_containers[@]}
+            for container in "${all_containers[@]}"; do
+                local container_flag
+                local filename
+                if [[ ${#all_containers[@]} -gt 1 ]]; then
+                    filename="${pod}-${container}"
+                    filename="${pod}-${container}$( [[ "$previous" == true ]] && echo .prev ).log"
                     container_flag="-c $container"
-                    container_name="$container"
+                    echo "  Saving logs for container '$container' to: $filename"
                 else
-                    echo "No container selected for pod $pod, skipping..."
-                    ((current_pod++))
-                    continue
+                    filename="${pod}$( [[ "$previous" == true ]] && echo .prev ).log"
+                    echo "  Saving logs to: $filename"
                 fi
-            fi
-            
-            local filename="${pod}${container_name:+-$container_name}.log"
-            echo "Saving logs to: $filename"
-            
-            # Build kubectl logs command with optional tail, since, and since-time
-            local kubectl_cmd="kubectl logs $pod $container_flag"
-            if [[ -n "$tail_lines" ]]; then
-                kubectl_cmd="$kubectl_cmd --tail=$tail_lines"
-            fi
-            if [[ -n "$since" ]]; then
-                kubectl_cmd="$kubectl_cmd --since=$since"
-            fi
-            if [[ -n "$since_time" ]]; then
-                kubectl_cmd="$kubectl_cmd --since-time=$since_time"
-            fi
-            
-            eval "$kubectl_cmd" > "$filename"
-            echo "Logs saved to: $filename"
+
+                # Build kubectl logs command with optional tail, since, and since-time
+                local kubectl_cmd="kubectl logs $pod $container_flag"
+                if [[ "$previous" == true ]]; then
+                    kubectl_cmd="$kubectl_cmd -p"
+                fi
+                if [[ -n "$tail_lines" ]]; then
+                    kubectl_cmd="$kubectl_cmd --tail=$tail_lines"
+                fi
+                if [[ -n "$since" ]]; then
+                    kubectl_cmd="$kubectl_cmd --since=$since"
+                fi
+                if [[ -n "$since_time" ]]; then
+                    kubectl_cmd="$kubectl_cmd --since-time=$since_time"
+                fi
+
+                if eval "$kubectl_cmd" > "$filename" 2>/dev/null; then
+                    echo "    ✓ Logs saved to: $filename"
+                else
+                    echo "    ✗ Failed to get logs for container '$container'"
+                fi
+            done
             
             ((current_pod++))
         done
@@ -547,15 +572,15 @@ klogs() {
         # Single pod interactive mode (view or follow)
         local pod="${pods_array[1]}"
         
-        # Check if pod has multiple containers
+        # Show all containers (including init containers and those not started)
         local containers
-        containers=$(kubectl get pod "$pod" -o jsonpath='{.spec.containers[*].name}' 2>/dev/null)
+        containers=$(kubectl get pod "$pod" -o jsonpath='{.spec.initContainers[*].name} {.spec.containers[*].name}' 2>/dev/null)
         local container_count=$(echo "$containers" | wc -w)
-        
+
         local container_flag=""
         if [[ $container_count -gt 1 ]]; then
             local container
-            container=$(echo "$containers" | tr ' ' '\n' | fzf --prompt="Select container: ")
+            container=$(echo "$containers" | tr ' ' '\n' | fzf --prompt="Select container (init and app): ")
             if [[ -n "$container" ]]; then
                 container_flag="-c $container"
             else
@@ -563,9 +588,12 @@ klogs() {
                 return 1
             fi
         fi
-        
+
         # Build kubectl logs command with optional tail, since, and since-time
         local kubectl_cmd="kubectl logs $pod $container_flag"
+        if [[ "$previous" == true ]]; then
+            kubectl_cmd="$kubectl_cmd -p"
+        fi
         if [[ -n "$tail_lines" ]]; then
             kubectl_cmd="$kubectl_cmd --tail=$tail_lines"
         fi
@@ -575,19 +603,20 @@ klogs() {
         if [[ -n "$since_time" ]]; then
             kubectl_cmd="$kubectl_cmd --since-time=$since_time"
         fi
-        
+
         if [[ "$follow" == true ]]; then
-            eval "$kubectl_cmd -f"
-        else
-            eval "$kubectl_cmd"
+            kubectl_cmd="$kubectl_cmd -f"
         fi
+
+        echo "Running command: $kubectl_cmd"
+        eval "$kubectl_cmd"
     fi
 }
 
 # Execute command in pod
 kexec() {
     local pod
-    if ! pod=$(_k8s_select_resource "pods" "pod/" ""); then
+    if ! pod=$(_k8s_select_resource "pods" "pod/" "" "" "execute"); then
         return 1
     fi
     
@@ -617,7 +646,7 @@ kexec() {
 # Port forward to a pod
 kport() {
     local pod
-    if ! pod=$(_k8s_select_resource "pods" "pod/" ""); then
+    if ! pod=$(_k8s_select_resource "pods" "pod/" "" "" "port forward"); then
         return 1
     fi
     
@@ -648,7 +677,7 @@ kport() {
 # Port forward to a service
 ksvcport() {
     local service
-    if ! service=$(_k8s_select_resource "services" "service/" ""); then
+    if ! service=$(_k8s_select_resource "services" "service/" "" "port forward"); then
         return 1
     fi
     
@@ -684,14 +713,14 @@ ksvcport() {
     fi
 }
 
-alias krestarts='kubectl get pods --no-headers --sort-by='\''.status.containerStatuses[0].restartCount'\'' | awk '\''$4>0'\'''
+alias krestarts='kubectl get pods --no-headers --sort-by='\''.status.containerStatuses[0].restartCount'\'''
 
 # +---------+
 # | kubectl |
 # +---------+
 
 # Execute a kubectl command against all namespaces
-alias kca='f(){ kubectl "$@" --all-namespaces;  unset -f f; }; f'
+# alias kca='f(){ kubectl "$@" --all-namespaces;  unset -f f; }; f'
 
 # Apply a YML file
 alias kaf='kubectl apply -f'
@@ -709,8 +738,13 @@ alias keti='kubectl exec -ti'
 # alias kcgc='kubectl config get-contexts'
 
 # General aliases
-alias krm='kubectl delete'
-alias krmf='kubectl delete -f'
+alias kd='kubectl delete'
+alias kdf='kubectl delete -f'
+
+alias kg='kubectl get'
+alias kgy='kubectl get -o yaml'
+alias kgj='kubectl get -o json'
+alias kgw='kubectl get -o wide'
 
 # Pod management.
 alias kgp='kubectl get pod'
@@ -735,7 +769,10 @@ alias kgplw='kubectl get pod -o wide -l'
 # can be accomponied with | uniq -D to show duplicates
 alias kgpip='kubectl get pod -A --no-headers -o custom-columns=":metadata.namespace,:metadata.name,:status.podIP" | sort -k3'
 
+# Events
 alias kge='kubectl get events --sort-by=.lastTimestamp'
+alias kgecsv="kubectl get events --sort-by=.lastTimestamp -o json | jq -r '.items[] | [.firstTimestamp, .lastTimestamp, .reason, .message] | @csv'"
+alias kgetsv="kubectl get events --sort-by=.lastTimestamp -o json | jq -r '.items[] | [.firstTimestamp, .lastTimestamp, .reason, .message] | @tsv'"
 
 alias kgep='kubectl get ep'
 alias kgepw='kubectl get ep -o wide'
@@ -819,7 +856,7 @@ alias klrg='f(){ kubectl get pods 2> /dev/null | rg "$@" | awk '\''{print $1}'\'
 alias kll='f(){ kubectl get pods --no-headers -l "$@" 2> /dev/null | awk '\''{print $1}'\'' | xargs -I {} sh -c '\''kubectl logs {} > {}.log'\'';  unset -f f; }; f'
 
 # File copy
-alias kcp='kubectl cp'
+alias kcp='kubectl cp --retries=5'
 
 # Node Management
 alias kgno='kubectl get nodes'

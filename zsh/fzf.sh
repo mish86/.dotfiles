@@ -10,24 +10,39 @@ source <(fzf --zsh)
 
 # fzf theme: https://github.com/catppuccin/fzf
 FZF_MOCHA_COLORS=" \
---color='bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8' \
---color='fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc' \
---color='marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8'
---multi"
+--color=bg+:#313244,bg:#1E1E2E,spinner:#F5E0DC,hl:#F38BA8 \
+--color=fg:#CDD6F4,header:#F38BA8,info:#CBA6F7,pointer:#F5E0DC \
+--color=marker:#B4BEFE,fg+:#CDD6F4,prompt:#CBA6F7,hl+:#F38BA8 \
+--color=selected-bg:#45475A \
+--color=border:#313244,label:#CDD6F4"
+
+FZF_LATTE_COLORS=" \
+--color=bg+:#CCD0DA,bg:#EFF1F5,spinner:#DC8A78,hl:#D20F39 \
+--color=fg:#4C4F69,header:#D20F39,info:#8839EF,pointer:#DC8A78 \
+--color=marker:#7287FD,fg+:#4C4F69,prompt:#8839EF,hl+:#D20F39 \
+--color=selected-bg:#BCC0CC \
+--color=border:#CCD0DA,label:#4C4F69"
 
 FZF_MACCHIATO_COLORS=" \
---color=bg+:#363a4f,bg:#24273a,spinner:#f4dbd6,hl:#ed8796 \
---color=fg:#cad3f5,header:#ed8796,info:#c6a0f6,pointer:#f4dbd6 \
---color=marker:#b7bdf8,fg+:#cad3f5,prompt:#c6a0f6,hl+:#ed8796 \
---color=selected-bg:#494d64 \
---multi"
+--color=bg+:#363A4F,bg:#24273A,spinner:#F4DBD6,hl:#ED8796 \
+--color=fg:#CAD3F5,header:#ED8796,info:#C6A0F6,pointer:#F4DBD6 \
+--color=marker:#B7BDF8,fg+:#CAD3F5,prompt:#C6A0F6,hl+:#ED8796 \
+--color=selected-bg:#494D64 \
+--color=border:#363A4F,label:#CAD3F5"
+
+FZF_FRAPPE_COLORS=" \
+--color=bg+:#414559,bg:#303446,spinner:#F2D5CF,hl:#E78284 \
+--color=fg:#C6D0F5,header:#E78284,info:#CA9EE6,pointer:#F2D5CF \
+--color=marker:#BABBF1,fg+:#C6D0F5,prompt:#CA9EE6,hl+:#E78284 \
+--color=selected-bg:#51576D \
+--color=border:#737994,label:#C6D0F5"
 
 # --tmux options does not work in FZF_DEFAULT_OPTS
 export FZF_TMUX_OPTS="-p 80%,80%"
 export FZF_DEFAULT_OPTS="--height '50%' --tmux 'center,80%,50%' \
 --border sharp \
 --layout reverse \
-$FZF_MACCHIATO_COLORS \
+$FZF_FRAPPE_COLORS \
 --prompt '> ' \
 --pointer '▶' \
 --marker '┃'"
@@ -73,7 +88,7 @@ export KEYTIMEOUT=100
 # https://news.ycombinator.com/item?id=38471822
 # https://github.com/junegunn/fzf/blob/master/ADVANCED.md#switching-between-ripgrep-mode-and-fzf-mode-using-a-single-key-binding
 function frg {
-  result=$(rg --ignore-case --color=always --line-number --no-heading "$@" |
+  result=$(rg --ignore-case --color=always --line-number --no-heading "${*:-}" |
     fzf --ansi \
       --color 'hl:-1:underline,hl+:-1:underline:reverse' \
       --delimiter ':' \

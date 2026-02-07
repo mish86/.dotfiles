@@ -125,7 +125,7 @@ symbol = " "
 
 [kubernetes]
 disabled = false
-format = 'on [$symbol$cluster:$namespace]($style) '
+# format = 'on [$symbol$cluster:$namespace]($style) '
 style = 'bold blue'
 
 [lua]
@@ -208,6 +208,7 @@ symbol = " "
 
 [python]
 symbol = " "
+python_binary = 'python3'
 pyenv_version_name = false
 
 [rlang]

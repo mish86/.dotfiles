@@ -5,7 +5,7 @@
 alias sudo='sudo '
 
 # watch with proper quoting for complex commands
-alias watch='watch -d -n 1 '
+alias watch='watch -d -n 5 '
 
 # +-----+
 # | Zsh |
@@ -97,7 +97,9 @@ alias dif="git diff --no-index" # Diff two files even if not in git repo! Can ad
 # alias tmuxa='tmux attach -t'
 # alias tmuxl='tmux list-sessions'
 
-if [[ fzf ]]; then
+if command -v fzf &>/dev/null; then
   alias fctx='kubectl config get-contexts -o name | fzf'
   alias fkubectl='kubectl --context="$(fctx)"'
 fi
+
+# alias litmusctl="litmusctl --skipSSL"

@@ -1,5 +1,6 @@
 general.import = [
-  "~/.config/catppuccin/alacritty/catppuccin-macchiato.toml"
+  # "~/.config/catppuccin/alacritty/catppuccin-macchiato.toml"
+  "~/.config/catppuccin/alacritty/catppuccin-latte.toml"
 ]
 
 [env]

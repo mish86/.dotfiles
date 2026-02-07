@@ -6,11 +6,12 @@ k9s:
   readOnly: false
   noExitOnCtrlC: false
   ui:
-    skin: catppuccin-macchiato
+    # skin: catppuccin-macchiato
     # ...or another flavor:
     # skin: catppuccin-macchiato
-    # skin: catppuccin-frappe
+    skin: catppuccin-frappe
     # skin: catppuccin-latte
+    # skin: catppuccin-mocha
 
     # ...or the transparent variants:
     # skin: catppuccin-mocha-transparent

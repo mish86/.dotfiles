@@ -21,10 +21,10 @@ source "$HOME/.config/zsh/completion.sh"
   source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # https://github.com/junegunn/fzf
-[[ fzf ]] && source "$HOME/.config/zsh/fzf.sh"
-[[ bat ]] && source "$HOME/.config/zsh/bat.sh"
-[[ lazygit ]] && source "$HOME/.config/zsh/lazygit.sh"
-[[ zoxide ]] && eval "$(zoxide init zsh)"
+command -v fzf &>/dev/null && source "$HOME/.config/zsh/fzf.sh"
+command -v bat &>/dev/null && source "$HOME/.config/zsh/bat.sh"
+command -v lazygit &>/dev/null && source "$HOME/.config/zsh/lazygit.sh"
+command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
 
 # https://github.com/charmbracelet/gum
 # [[ gum ]] && source "$HOME/.config/zsh/gum_scripts.sh"
@@ -40,6 +40,7 @@ source "$HOME/.config/zsh/kube.sh"
 source "$HOME/.config/zsh/python.sh"
 source "$HOME/.config/zsh/go.sh"
 source "$HOME/.config/zsh/azure_cli.sh"
+# source "$HOME/.config/zsh/litmus.sh"
 
 # https://github.com/ryanoasis/nerd-fonts/releases
 [[ starship ]] && \
