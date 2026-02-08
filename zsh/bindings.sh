@@ -10,7 +10,22 @@ bindkey "^E" end-of-line
 bindkey '^[^?' backward-kill-word
 bindkey '^[[3;3~' kill-word
 bindkey '^[^M' self-insert-unmeta
-# Shift+Enter inserts newline (multi-line editing) — CSI u encoded
+# CSI u: tmux extended-keys sends Shift+key as \e[CODE;2u
+# Generic widget to insert the character from any CSI u sequence
+csi-u-insert() {
+  local key="${KEYS#$'\e['}"
+  local code="${key%%;*}"
+  if [[ -n "$code" ]] && (( code >= 32 && code <= 126 )); then
+    printf -v REPLY "\\$(printf '%03o' "$code")"
+    LBUFFER+="$REPLY"
+  fi
+}
+zle -N csi-u-insert
+for code in {32..126}; do
+  bindkey "\e[${code};2u" csi-u-insert
+done
+
+# Shift+Enter inserts newline (overrides the generic binding above)
 shift-enter-newline() { LBUFFER+=$'\n'; }
 zle -N shift-enter-newline
 bindkey '\e[13;2u' shift-enter-newline
