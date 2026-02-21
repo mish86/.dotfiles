@@ -1,3 +1,19 @@
+# Disable Esc from quitting — only quit with q
+[[mgr.prepend_keymap]]
+on = [ "<Esc>" ]
+run = "noop"
+desc = "Do nothing"
+
+[[mgr.prepend_keymap]]
+on = [ "q" ]
+run = "noop"
+desc = "Disable single q quit"
+
+[[mgr.prepend_keymap]]
+on = [ "q", "q" ]
+run = "quit"
+desc = "Quit yazi"
+
 [[mgr.prepend_keymap]]
 on = [ "g", "c" ]
 run = "cd ~/.dotfiles"

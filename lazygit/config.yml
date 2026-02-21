@@ -1,3 +1,4 @@
+confirmOnQuit: true
 git:
   pagers:
     - colorArg: always
