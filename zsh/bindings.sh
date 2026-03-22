@@ -25,6 +25,9 @@ for code in {32..126}; do
   bindkey "\e[${code};2u" csi-u-insert
 done
 
+# Shift+Backspace acts as regular backspace (CSI u code 127)
+bindkey '\e[127;2u' backward-delete-char
+
 # Shift+Enter inserts newline (overrides the generic binding above)
 shift-enter-newline() { LBUFFER+=$'\n'; }
 zle -N shift-enter-newline

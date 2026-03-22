@@ -83,11 +83,11 @@ keybind = cmd+t=text:\x02\x63
 # NOTE "$HOME/.config/tmux/tmux.conf"
 # keybind = ctrl+tab=text:\x02\x09
 # ⌘ + [ or ] for navigate to next and previous window
-keybind = cmd+right_bracket=text:\x02\x6e
-keybind = cmd+left_bracket=text:\x02\x70
+keybind = cmd+]=text:\x02\x6e
+keybind = cmd+[=text:\x02\x70
 # ⌘ + ⇧ + [ or ] for swap to next and previous window
-keybind = cmd+shift+right_bracket=text:\x02\x5d
-keybind = cmd+shift+left_bracket=text:\x02\x5b
+keybind = cmd+shift+]=text:\x02\x5d
+keybind = cmd+shift+[=text:\x02\x5b
 # ⌘ + 0..9 for navigate to window by number
 keybind = cmd+physical:one=text:\x02\x31
 keybind = cmd+physical:two=text:\x02\x32
@@ -112,11 +112,11 @@ keybind = alt+w=text:\x20\x62d
 keybind = alt+tab=text:\x4c
 keybind = alt+shift+tab=text:\x48
 # ⌥ + [ or ] for navigate to next and previous buffer
-keybind = alt+left_bracket=text:\x48
-keybind = alt+right_bracket=text:\x4c
-# ⌥ + ⇧ + [ or ] for swap buffer to left or right 
-keybind = alt+shift+left_bracket=text:[B
-keybind = alt+shift+right_bracket=text:]B
+keybind = alt+[=text:\x48
+keybind = alt+]=text:\x4c
+# ⌥ + ⇧ + [ or ] for swap buffer to left or right
+keybind = alt+shift+[=text:[B
+keybind = alt+shift+]=text:]B
 # ⌥ + Home or End for navigate to start and end of a line
 keybind = alt+home=text:0
 keybind = alt+end=text:$
