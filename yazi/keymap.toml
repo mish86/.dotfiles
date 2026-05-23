@@ -1,4 +1,4 @@
-# Disable Esc from quitting — only quit with q
+# Disable Esc from quitting - only quit with q
 [[mgr.prepend_keymap]]
 on = [ "<Esc>" ]
 run = "noop"

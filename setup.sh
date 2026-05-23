@@ -48,6 +48,9 @@ stow starship -t "$HOME/.config/starship" --adopt -v
 # stow aerospace -t "$HOME/.config/aerospace" --adopt -v
 mkdir -p "$HOME/.config/k9s"
 stow k9s -t "$HOME/.config/k9s" --adopt -v
+# claude code
+mkdir -p "$HOME/.claude"
+stow claude -t "$HOME/.claude" --adopt -v
 # .zshrc
 stow home -t $HOME --adopt -v
 
