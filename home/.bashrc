@@ -34,6 +34,6 @@ command -v aws     &>/dev/null && source "$BASH_CFG/aws.sh"
 command -v yazi &>/dev/null && source "$BASH_CFG/yazi.sh"
 
 # Prompt - load last so it can override anything above
-source "$BASH_CFG/prompt.sh"
+# source "$BASH_CFG/prompt.sh"
 
 unset BASH_CFG
