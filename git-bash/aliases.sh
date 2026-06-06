@@ -29,7 +29,7 @@ alias rm='rm -iv'
 # | zip |
 # +-----+
 
-# Windows ships bsdtar at C:\Windows\System32\tar.exe - it handles zip natively.
+# Windows ships bsdtar at C:\Windows\System32\tar.exe-it handles zip natively.
 # (Git Bash's own `tar` is GNU tar and cannot do zip.)
 if [[ -x /c/Windows/System32/tar.exe ]]; then
   alias zip='tar.exe -a -cf'    # zip out.zip file1 file2 dir/
@@ -79,7 +79,7 @@ alias gr='git remote'
 alias grs='git remote show'
 alias glol='git log --graph --abbrev-commit --oneline --decorate'
 alias gclean="git branch --merged | grep -v '\\*\\|master\\|main\\|develop' | xargs -n 1 git branch -d"
-alias gblog="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:red)%(refname:short)%(color:reset) - %(color:yellow)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:blue)%(committerdate:relative)%(color:reset))'"
+alias gblog="git for-each-ref --sort=committerdate refs/heads/ --format='%(HEAD) %(color:red)%(refname:short)%(color:reset)-%(color:yellow)%(objectname:short)%(color:reset)-%(contents:subject)-%(authorname) (%(color:blue)%(committerdate:relative)%(color:reset))'"
 alias gsub='git submodule update --remote'
 alias gj='git-jump'
 

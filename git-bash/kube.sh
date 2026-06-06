@@ -4,17 +4,99 @@
 
 command -v kubectl &>/dev/null || return 0
 
-# Bash completion
-source <(kubectl completion bash)
+# Bash completion. `eval` is more reliable than process substitution on
+# Git Bash for Windows (FIFOs can get blocked by AV).
+# Cached to a file so we don't spawn kubectl on every shell startup.
+__kube_completion_cache="$HOME/.cache/kubectl-completion.bash"
+mkdir -p "$(dirname "$__kube_completion_cache")" 2>/dev/null
+if [[ ! -s "$__kube_completion_cache" ]] || \
+   [[ "$(command -v kubectl)" -nt "$__kube_completion_cache" ]]; then
+  kubectl completion bash >"$__kube_completion_cache" 2>/dev/null
+fi
+[[ -s "$__kube_completion_cache" ]] && source "$__kube_completion_cache"
+unset __kube_completion_cache
 
 # kubecolor: optional drop-in color wrapper
 if command -v kubecolor &>/dev/null; then
   alias k='kubecolor'
   alias kubectl='kubecolor'
-  # Make completion also work for the wrapped commands
-  complete -o default -F __start_kubectl kubecolor
-  complete -o default -F __start_kubectl k
 fi
+
+# fzf-aware completion wrapper. Splices alias expansions into COMP_WORDS so
+# __start_kubectl (which only knows the `kubectl` command tree) sees the real
+# command — e.g. `kgp <TAB>` looks like `kubectl get pod <TAB>` to kubectl's
+# completion. Then if >1 match, pipes to fzf; if 0/1, behaves normally.
+_kubectl_fzf_complete() {
+  local typed="${COMP_WORDS[0]}"
+  local expansion="${BASH_ALIASES[$typed]}"
+  if [[ -n "$expansion" ]]; then
+    local -a expanded
+    read -ra expanded <<< "$expansion"
+    # Force the first word to "kubectl" — __start_kubectl is hardcoded for it,
+    # and BASH_ALIASES[kubectl]=kubecolor would otherwise leak through.
+    expanded[0]="kubectl"
+    COMP_WORDS=("${expanded[@]}" "${COMP_WORDS[@]:1}")
+    COMP_CWORD=$((COMP_CWORD + ${#expanded[@]}-1))
+  fi
+  __start_kubectl "${COMP_WORDS[0]}" "${COMP_WORDS[COMP_CWORD]}" "${COMP_WORDS[COMP_CWORD-1]}"
+  (( ${#COMPREPLY[@]} > 1 )) || return 0
+  command -v fzf &>/dev/null || return 0
+  local choice
+  # No --height: fzf uses the alternate screen so the prompt restores cleanly
+  # on exit. With --height, readline doesn't repaint the prompt line and you
+  # see only the completion text (the line buffer is correct, but the
+  # display lags — pressing Enter still runs the right command).
+  choice=$(printf '%s\n' "${COMPREPLY[@]}" \
+    | fzf --reverse --select-1 --exit-0 \
+          --prompt="${typed}> ")
+  if [[ -n "$choice" ]]; then
+    COMPREPLY=("$choice")
+  else
+    COMPREPLY=()
+  fi
+  # Belt-and-braces: force readline to repaint by faking a window resize.
+  # No-op on terminals that already redrew correctly.
+  kill -WINCH $$ 2>/dev/null
+}
+
+# Wire the fzf-aware completion to kubectl, kubecolor, and every alias that
+# expands to one of them. Uses BASH_ALIASES (the live associative array)
+# instead of parsing `alias` output — more robust.
+# Runs at the end of the file, after all `alias k…=…` definitions.
+__kube_wire_alias_completion() {
+  declare -F __start_kubectl >/dev/null 2>&1 || {
+    echo "kube.sh: __start_kubectl not defined; kubectl completion not loaded" >&2
+    return 0
+  }
+  local completer=_kubectl_fzf_complete
+  complete -o default -F "$completer" kubectl
+  command -v kubecolor &>/dev/null && complete -o default -F "$completer" kubecolor
+
+  local name def
+  for name in "${!BASH_ALIASES[@]}"; do
+    def="${BASH_ALIASES[$name]}"
+    case "$def" in
+      kubectl*|kubecolor*)
+        complete -o default -F "$completer" "$name"
+        [[ -n "$KUBE_COMPLETION_DEBUG" ]] && echo "kube.sh: wired $name -> $def" >&2
+        ;;
+    esac
+  done
+}
+
+# Diagnostic: show what's wired and what's not.
+kube-completion-check() {
+  echo "== completion sanity =="
+  type _kubectl_fzf_complete &>/dev/null && echo "  _kubectl_fzf_complete: OK" || echo "  _kubectl_fzf_complete: MISSING"
+  type __start_kubectl       &>/dev/null && echo "  __start_kubectl:       OK" || echo "  __start_kubectl:       MISSING"
+  command -v fzf             &>/dev/null && echo "  fzf:                   $(command -v fzf)" || echo "  fzf:                   MISSING"
+  echo
+  echo "== complete entries =="
+  for c in kubectl kubecolor k kgp kgd kgsvc kgns; do
+    local out
+    out=$(complete -p "$c" 2>/dev/null) && echo "  $out" || echo "  $c: NONE"
+  done
+}
 
 # +--------------+
 # | fzf helpers  |
@@ -294,3 +376,7 @@ alias kgnoj='kubectl get nodes -o json'
 alias kgnoy='kubectl get nodes -o yaml'
 
 alias kgall='kubectl get all'
+
+# Register kubectl completion for every alias defined above.
+__kube_wire_alias_completion
+unset -f __kube_wire_alias_completion

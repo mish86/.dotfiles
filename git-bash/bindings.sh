@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Readline keybindings - Citrix-friendly (no Alt/Meta).
+# Readline keybindings-Citrix-friendly (no Alt/Meta).
 # Citrix from macOS does not forward Alt reliably, so this file sticks to
 # Ctrl + arrow / Ctrl + letter combos that pass through cleanly.
 #
@@ -27,7 +27,7 @@ bind '"\e[B": history-search-forward'  2>/dev/null
 
 # --- Completion behavior ---
 bind 'set completion-ignore-case on'      2>/dev/null   # tab is case-insensitive
-bind 'set completion-map-case on'         2>/dev/null   # treat - and _ as equal
+bind 'set completion-map-case on'         2>/dev/null   # treat-and _ as equal
 bind 'set show-all-if-ambiguous on'       2>/dev/null   # single tab shows matches
 bind 'set show-all-if-unmodified on'      2>/dev/null
 bind 'set colored-stats on'               2>/dev/null   # color file types

@@ -13,6 +13,9 @@ export EDITOR='vim'
 export LANG="${LANG:-en_US.UTF-8}"
 export LC_ALL="${LC_ALL:-en_US.UTF-8}"
 
+# Force Windows console code page to UTF-8 (65001)
+command -v chcp.com &>/dev/null && chcp.com 65001 &>/dev/null
+
 # Default flags for every `less` invocation (yours, git's, man's, kubectl's...).
 #   -R                preserve ANSI colors from upstream tools
 #   -F                quit if the content fits on one screen
@@ -21,3 +24,7 @@ export LC_ALL="${LC_ALL:-en_US.UTF-8}"
 #   --use-color       colorize less's own UI (prompts, status line)
 # Git Bash ships less >= 608, so all flags are supported.
 export LESS='-R -F -X --mouse --use-color'
+
+# starship looks at ~/.config/starship.toml by default; our config lives
+# one level deeper (matches the macOS layout).
+export STARSHIP_CONFIG="$HOME/.config/starship/starship.toml"

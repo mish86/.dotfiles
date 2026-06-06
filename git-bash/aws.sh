@@ -6,20 +6,51 @@
 command -v aws &>/dev/null || return 0
 command -v fzf &>/dev/null || return 0
 
-# eks-ssm-forward
-#   1. Pick an EKS cluster (fzf) and remember its API endpoint.
-#   2. Refresh kubeconfig for it, then rewrite the cluster entry to
-#      point at https://127.0.0.1 with insecure-skip-tls-verify=true.
-#   3. Pick a running EC2 bastion (fzf) and start an SSM port-forward
-#      session that maps localhost:443 -> <cluster endpoint>:443.
-eks-ssm-forward() {
-  local region cluster endpoint endpoint_host instance ctx
-
-  region="${AWS_REGION:-${AWS_DEFAULT_REGION:-$(aws configure get region 2>/dev/null)}}"
-  if [[ -z "$region" ]]; then
-    echo "eks-ssm-forward: AWS region not set (export AWS_REGION or aws configure)" >&2
+# Resolve AWS region or fail with a useful message.
+# Usage: region=$(_aws_region <caller-name>) || return 1
+_aws_region() {
+  local r="${AWS_REGION:-${AWS_DEFAULT_REGION:-$(aws configure get region 2>/dev/null)}}"
+  if [[ -z "$r" ]]; then
+    echo "${1:-aws}: AWS region not set (export AWS_REGION or aws configure)" >&2
     return 1
   fi
+  printf '%s\n' "$r"
+}
+
+# fzf-pick a running EC2 instance, print its InstanceId. Shows id, Name tag,
+# private IP, and type, aligned in columns.
+# Usage: instance=$(_aws_pick_ec2 "$region") || return 1
+_aws_pick_ec2() {
+  local region="$1"
+  aws ec2 describe-instances --region "$region" \
+      --filters 'Name=instance-state-name,Values=running' \
+      --query 'Reservations[].Instances[].[InstanceId, (Tags[?Key==`Name`].Value | [0]) || `-`, PrivateIpAddress, InstanceType]' \
+      --output text \
+    | column -t \
+    | fzf --prompt 'EC2> ' --no-multi --exit-0 --select-1 \
+    | awk '{print $1}'
+}
+
+# eks-ssm-forward [LOCAL_PORT]
+#   1. Pick an EKS cluster (fzf) and remember its API endpoint.
+#   2. Refresh kubeconfig for it, then rewrite the cluster entry to
+#      point at https://127.0.0.1:LOCAL_PORT with insecure-skip-tls-verify=true.
+#   3. Pick a running EC2 bastion (fzf) and start an SSM port-forward
+#      session that maps localhost:LOCAL_PORT -> <cluster endpoint>:443.
+#
+# LOCAL_PORT defaults to 443. Use a different port (e.g. 6443, 8443) to run
+# parallel sessions against different clusters — each cluster's kubeconfig
+# context will point at its own 127.0.0.1:<port>.
+eks-ssm-forward() {
+  local region cluster endpoint endpoint_host instance ctx
+  local local_port="${1:-443}"
+
+  if ! [[ "$local_port" =~ ^[0-9]+$ ]] || (( local_port < 1 || local_port > 65535 )); then
+    echo "eks-ssm-forward: invalid local port '$local_port' (1-65535)" >&2
+    return 1
+  fi
+
+  region=$(_aws_region eks-ssm-forward) || return 1
 
   for cmd in kubectl jq; do
     if ! command -v "$cmd" &>/dev/null; then
@@ -27,9 +58,6 @@ eks-ssm-forward() {
       return 1
     fi
   done
-  if ! aws ssm help 2>/dev/null | grep -q start-session; then
-    : # aws ssm is built-in; the session-manager-plugin is checked at session time
-  fi
 
   # 1. Pick EKS cluster
   cluster=$(aws eks list-clusters --region "$region" --query 'clusters[]' --output text \
@@ -65,23 +93,17 @@ eks-ssm-forward() {
   fi
 
   kubectl config set-cluster "$cluster_entry" \
-    --server="https://127.0.0.1" \
+    --server="https://127.0.0.1:${local_port}" \
     --insecure-skip-tls-verify=true >/dev/null || return 1
   # Strip CA data so insecure-skip-tls-verify actually takes effect.
   kubectl config unset "clusters.${cluster_entry}.certificate-authority-data" >/dev/null 2>&1 || true
   kubectl config unset "clusters.${cluster_entry}.certificate-authority" >/dev/null 2>&1 || true
-  echo "eks-ssm-forward: kubeconfig context '$ctx' -> https://127.0.0.1 (insecure-skip-tls-verify)"
+  echo "eks-ssm-forward: kubeconfig context '$ctx' -> https://127.0.0.1:${local_port} (insecure-skip-tls-verify)"
 
-  # 3. Pick EC2 instance (bastion). Show id, name tag, state, private IP.
-  instance=$(aws ec2 describe-instances --region "$region" \
-      --filters 'Name=instance-state-name,Values=running' \
-      --query 'Reservations[].Instances[].[InstanceId, (Tags[?Key==`Name`].Value | [0]) || `-`, PrivateIpAddress, InstanceType]' \
-      --output text \
-    | column -t \
-    | fzf --prompt 'Bastion> ' --no-multi --exit-0 --select-1 \
-    | awk '{print $1}') || return 1
+  # 3. Pick EC2 instance (bastion) and open the port-forward.
+  instance=$(_aws_pick_ec2 "$region") || return 1
   [[ -z "$instance" ]] && { echo "eks-ssm-forward: no instance selected" >&2; return 1; }
-  echo "eks-ssm-forward: starting SSM port-forward via $instance (localhost:443 -> $endpoint_host:443)"
+  echo "eks-ssm-forward: starting SSM port-forward via $instance (localhost:${local_port} -> $endpoint_host:443)"
 
   # MSYS converts unknown leading slashes in args; disable for SSM JSON-ish params.
   MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*' \
@@ -89,5 +111,19 @@ eks-ssm-forward() {
     --region "$region" \
     --target "$instance" \
     --document-name AWS-StartPortForwardingSessionToRemoteHost \
-    --parameters "host=${endpoint_host},portNumber=443,localPortNumber=443"
+    --parameters "host=${endpoint_host},portNumber=443,localPortNumber=${local_port}"
+}
+
+# ec2-ssm
+#   Pick a running EC2 instance (fzf) and open an interactive SSM shell.
+#   Useful when you just want a shell on a bastion/host without port-forwarding.
+ec2-ssm() {
+  local region instance
+  region=$(_aws_region ec2-ssm) || return 1
+
+  instance=$(_aws_pick_ec2 "$region") || return 1
+  [[ -z "$instance" ]] && { echo "ec2-ssm: no instance selected" >&2; return 1; }
+  echo "ec2-ssm: starting interactive SSM session on $instance"
+
+  aws ssm start-session --region "$region" --target "$instance"
 }

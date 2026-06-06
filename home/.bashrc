@@ -33,7 +33,10 @@ command -v aws     &>/dev/null && source "$BASH_CFG/aws.sh"
 # yazi: defines the `y` wrapper that cd's to the last yazi directory
 command -v yazi &>/dev/null && source "$BASH_CFG/yazi.sh"
 
-# Prompt - load last so it can override anything above
+# Prompt - load last so it can override anything above.
+# starship.sh is the active prompt; prompt.sh is the legacy hand-rolled
+# __git_ps1 + __kube_ps1 fallback, kept for reference.
+command -v starship &>/dev/null && source "$BASH_CFG/starship.sh"
 # source "$BASH_CFG/prompt.sh"
 
 unset BASH_CFG

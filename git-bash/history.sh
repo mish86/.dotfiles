@@ -5,7 +5,7 @@
 export HISTSIZE=100000
 export HISTFILESIZE=200000
 
-# Timestamps in the file - invaluable for forensics, no downside.
+# Timestamps in the file-invaluable for forensics, no downside.
 export HISTTIMEFORMAT='%F %T  '
 
 # Skip leading-space commands and consecutive duplicates. Standard.
@@ -14,7 +14,7 @@ export HISTCONTROL=ignoreboth
 # Don't clutter history with trivial stuff.
 export HISTIGNORE='ls:ll:cd:pwd:exit:clear:history:bg:fg'
 
-# Append on exit instead of overwriting - prevents loss across parallel sessions.
+# Append on exit instead of overwriting-prevents loss across parallel sessions.
 shopt -s histappend
 
 # Multi-line commands stored as one entry. On by default, but explicit is fine.
