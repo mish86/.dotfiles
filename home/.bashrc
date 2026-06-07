@@ -26,17 +26,21 @@ source "$BASH_CFG/completion.sh"
 command -v fzf     &>/dev/null && source "$BASH_CFG/fzf.sh"
 command -v bat     &>/dev/null && source "$BASH_CFG/bat.sh"
 command -v lazygit &>/dev/null && source "$BASH_CFG/lazygit.sh"
-command -v zoxide  &>/dev/null && source "$BASH_CFG/zoxide.sh"
 command -v kubectl &>/dev/null && source "$BASH_CFG/kube.sh"
 command -v aws     &>/dev/null && source "$BASH_CFG/aws.sh"
 
 # yazi: defines the `y` wrapper that cd's to the last yazi directory
 command -v yazi &>/dev/null && source "$BASH_CFG/yazi.sh"
 
-# Prompt - load last so it can override anything above.
+# Prompt - load before zoxide so zoxide's PROMPT_COMMAND hook ends up last.
 # starship.sh is the active prompt; prompt.sh is the legacy hand-rolled
 # __git_ps1 + __kube_ps1 fallback, kept for reference.
 command -v starship &>/dev/null && source "$BASH_CFG/starship.sh"
 # source "$BASH_CFG/prompt.sh"
+
+# zoxide must be initialized AFTER anything else that touches PROMPT_COMMAND
+# (starship, kube.sh, ...) so its dir-tracking hook fires last. Otherwise
+# `zoxide doctor` prints a warning the first time you run `z`.
+command -v zoxide &>/dev/null && source "$BASH_CFG/zoxide.sh"
 
 unset BASH_CFG

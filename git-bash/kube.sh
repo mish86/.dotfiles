@@ -25,10 +25,14 @@ fi
 # fzf-aware completion wrapper. Splices alias expansions into COMP_WORDS so
 # __start_kubectl (which only knows the `kubectl` command tree) sees the real
 # command - e.g. `kgp <TAB>` looks like `kubectl get pod <TAB>` to kubectl's
-# completion. Then if >1 match, pipes to fzf; if 0/1, behaves normally.
+# completion. Sets COMPREPLY[0] to the chosen value (or empty).
+#
+# Called from:
+# 1. `complete -F` registrations (legacy / non-Tab completion contexts).
+# 2. The bind -x Tab dispatcher __fzf_tab below (preferred path on Git Bash).
 _kubectl_fzf_complete() {
   local typed="${COMP_WORDS[0]}"
-  local expansion="${BASH_ALIASES[$typed]}"
+  local expansion="${BASH_ALIASES[$typed]:-}"
   if [[ -n "$expansion" ]]; then
     local -a expanded
     read -ra expanded <<< "$expansion"
@@ -37,32 +41,163 @@ _kubectl_fzf_complete() {
     expanded[0]="kubectl"
     COMP_WORDS=("${expanded[@]}" "${COMP_WORDS[@]:1}")
     COMP_CWORD=$((COMP_CWORD + ${#expanded[@]}-1))
+    # Also rewrite COMP_LINE / COMP_POINT so completers that re-parse the
+    # line (cobra-generated handlers do) see "kubectl logs ..." not "kl ...".
+    # IMPORTANT: use the FORCED expansion (kubectl ...) not the raw one
+    # (kubecolor ...) - otherwise `alias kubectl=kubecolor` leaks into the
+    # rewritten COMP_LINE and kubectl's completer sees an unknown command.
+    if [[ "$COMP_LINE" == "$typed"* ]]; then
+      local expanded_str="${expanded[*]}"
+      COMP_LINE="$expanded_str${COMP_LINE:${#typed}}"
+      COMP_POINT=$((COMP_POINT + ${#expanded_str} - ${#typed}))
+    fi
   fi
-  __start_kubectl "${COMP_WORDS[0]}" "${COMP_WORDS[COMP_CWORD]}" "${COMP_WORDS[COMP_CWORD-1]}"
-  (( ${#COMPREPLY[@]} > 1 )) || return 0
-  command -v fzf &>/dev/null || return 0
+  __start_kubectl "${COMP_WORDS[0]}" "${COMP_WORDS[COMP_CWORD]}" "${COMP_WORDS[COMP_CWORD-1]}" 2>/dev/null
+  (( ${#COMPREPLY[@]} > 0 )) || return 0
+
   local choice
-  # No --height: fzf uses the alternate screen so the prompt restores cleanly
-  # on exit. With --height, readline doesn't repaint the prompt line and you
-  # see only the completion text (the line buffer is correct, but the
-  # display lags - pressing Enter still runs the right command).
-  choice=$(printf '%s\n' "${COMPREPLY[@]}" \
-    | fzf --reverse --select-1 --exit-0 \
-          --prompt="${typed}> ")
+  if (( ${#COMPREPLY[@]} == 1 )); then
+    choice="${COMPREPLY[0]}"
+  else
+    command -v fzf &>/dev/null || return 0
+    choice=$(printf '%s\n' "${COMPREPLY[@]}" \
+      | fzf --reverse --select-1 --exit-0 \
+            --prompt="${typed}> ")
+  fi
+
+  local prev_word=""
+  (( COMP_CWORD > 0 )) && prev_word="${COMP_WORDS[COMP_CWORD-1]}"
+
   if [[ -n "$choice" ]]; then
-    COMPREPLY=("$choice")
+    local reply="$choice"
+    # For `kl`/`klp` at the pod-name position, auto-append `> <pod>.log`
+    # so selecting a pod yields `kl <pod> > <pod>.log` ready to run.
+    # Skip if the user already typed a redirect on the line.
+    case "$typed" in
+      kl|klp)
+        case "$prev_word" in
+          logs|-p|--previous)
+            [[ "$COMP_LINE" != *">"* ]] && reply="$choice > $choice.log"
+            ;;
+        esac
+        ;;
+    esac
+    COMPREPLY=("$reply")
   else
     COMPREPLY=()
   fi
-  # Belt-and-braces: force readline to repaint by faking a window resize.
-  # No-op on terminals that already redrew correctly.
-  kill -WINCH $$ 2>/dev/null
 }
 
-# Wire the fzf-aware completion to kubectl, kubecolor, and every alias that
-# expands to one of them. Uses BASH_ALIASES (the live associative array)
-# instead of parsing `alias` output - more robust.
-# Runs at the end of the file, after all `alias k...=...` definitions.
+# Tab dispatcher (bind -x). On Git Bash/MinTTY, complete -F + fzf alt-screen
+# leaves readline's cursor-tracking desynced - the prompt and buffer prefix
+# render shifted after the completion insert. bind -x bypasses this: we mutate
+# READLINE_LINE/READLINE_POINT directly and readline redraws cleanly.
+#
+# Dispatches:
+# - kubectl/kubecolor (and their aliases) -> _kubectl_fzf_complete
+# - everything else -> registered `complete -F` handler if any, fzf-picking
+#   when >1 match; fallback to filename completion via `compgen -o default`.
+#
+# Disable by exporting KUBE_NO_FZF_TAB=1 before sourcing.
+__fzf_tab() {
+  # Shadow `compopt` with a no-op for the lifetime of this dispatch. Many
+  # complete -F handlers (kubectl, git, ...) call `compopt -o nospace`; outside
+  # readline's native completion context the builtin warns to stderr. Bash has
+  # no function-local function scope, so we define+unset around the inner call.
+  compopt() { return 0; }
+  __fzf_tab_inner
+  local rc=$?
+  unset -f compopt
+  return $rc
+}
+
+__fzf_tab_inner() {
+  local line="$READLINE_LINE"
+  local point="$READLINE_POINT"
+  local before="${line:0:point}"
+  local after="${line:point}"
+
+  # Current word = trailing non-whitespace run of `before`.
+  local cur=""
+  [[ "$before" =~ ([^[:space:]]*)$ ]] && cur="${BASH_REMATCH[1]}"
+  local prefix="${before%"$cur"}"
+
+  # First word of the line (command being completed).
+  local first="${line%%[[:space:]]*}"
+
+  # Populate COMP_* the way complete -F handlers expect.
+  # COMP_TYPE/COMP_KEY mimic a Tab press (9 = ASCII HT). cobra-generated
+  # completers (kubectl, helm, gh, ...) branch on these and emit resource-type
+  # stubs like `pods/` instead of real names if they're missing.
+  COMP_LINE="$line"
+  COMP_POINT="$point"
+  COMP_TYPE=9
+  COMP_KEY=9
+  read -ra COMP_WORDS <<< "$before"
+  [[ -z "$cur" ]] && COMP_WORDS+=("")
+  COMP_CWORD=$((${#COMP_WORDS[@]} - 1))
+  COMPREPLY=()
+
+  local is_kube=0
+  if [[ -n "$first" ]]; then
+    case "$first" in
+      kubectl|kubecolor) is_kube=1 ;;
+      *)
+        # Empty $first would trip "bad array subscript" on associative arrays.
+        case "${BASH_ALIASES[$first]:-}" in
+          kubectl*|kubecolor*) is_kube=1 ;;
+        esac
+        ;;
+    esac
+  fi
+
+  if (( is_kube )); then
+    _kubectl_fzf_complete
+  elif [[ -n "$first" ]]; then
+    # Try the registered complete -F handler for this command.
+    local fn
+    fn=$(complete -p "$first" 2>/dev/null | sed -n 's/.*-F \([^ ]*\).*/\1/p')
+    if [[ -n "$fn" ]] && declare -F "$fn" &>/dev/null; then
+      "$fn" "$first" "$cur" "${COMP_WORDS[COMP_CWORD-1]:-}" 2>/dev/null
+    fi
+    # Fallback to bash's default (files + commands at line start).
+    if (( ${#COMPREPLY[@]} == 0 )); then
+      mapfile -t COMPREPLY < <(compgen -o default -- "$cur" 2>/dev/null)
+    fi
+  else
+    # Empty line: list commands/files.
+    mapfile -t COMPREPLY < <(compgen -o default -- "" 2>/dev/null)
+  fi
+
+  (( ${#COMPREPLY[@]} == 0 )) && return 0
+
+  local choice
+  if (( ${#COMPREPLY[@]} == 1 )); then
+    choice="${COMPREPLY[0]}"
+  elif command -v fzf &>/dev/null; then
+    choice=$(printf '%s\n' "${COMPREPLY[@]}" \
+      | fzf --reverse --select-1 --exit-0 \
+            --prompt="${cur:-$first}> ")
+  else
+    return 0
+  fi
+  [[ -z "$choice" ]] && return 0
+
+  # Append a space after the inserted word so the user can keep typing args.
+  # Skip for directories (let user Tab into them) and for completions that
+  # already embed structure (e.g. `pod > pod.log` from the kl auto-redirect).
+  local trail=" "
+  case "$choice" in
+    *' > '*|*' '*) trail="" ;;
+    */) trail="" ;;
+  esac
+  [[ -d "$choice" ]] && trail=""
+
+  READLINE_LINE="$prefix$choice$trail$after"
+  READLINE_POINT=$((${#prefix} + ${#choice} + ${#trail}))
+}
+
+# Wire complete -F for non-Tab completion contexts + bind Tab to __fzf_tab.
 __kube_wire_alias_completion() {
   declare -F __start_kubectl >/dev/null 2>&1 || {
     echo "kube.sh: __start_kubectl not defined; kubectl completion not loaded" >&2
@@ -82,20 +217,42 @@ __kube_wire_alias_completion() {
         ;;
     esac
   done
+
+  # Tab dispatch via bind -x - works around Git Bash readline redraw bug.
+  if [[ $- == *i* && -z "$KUBE_NO_FZF_TAB" ]]; then
+    bind -x '"\C-i": __fzf_tab' 2>/dev/null
+  fi
 }
 
 # Diagnostic: show what's wired and what's not.
 kube-completion-check() {
   echo "== completion sanity =="
   type _kubectl_fzf_complete &>/dev/null && echo "  _kubectl_fzf_complete: OK" || echo "  _kubectl_fzf_complete: MISSING"
+  type __fzf_tab             &>/dev/null && echo "  __fzf_tab:             OK" || echo "  __fzf_tab:             MISSING"
   type __start_kubectl       &>/dev/null && echo "  __start_kubectl:       OK" || echo "  __start_kubectl:       MISSING"
   command -v fzf             &>/dev/null && echo "  fzf:                   $(command -v fzf)" || echo "  fzf:                   MISSING"
   echo
+  echo "== Tab bindings =="
+  # bind -X shows bind -x handlers; bind -p shows readline-function bindings.
+  # The Tab key is \C-i (ASCII HT). Either may show our handler.
+  { bind -X 2>/dev/null; bind -p 2>/dev/null; } | grep -E '"\\C-i"' | sed 's/^/  /'
+  [[ ${PIPESTATUS[0]} -ne 0 ]] && echo "  (no \\C-i binding)"
+  echo
   echo "== complete entries =="
-  for c in kubectl kubecolor k kgp kgd kgsvc kgns; do
-    local out
+  local c out
+  for c in kubectl kubecolor k kgp kgd kgsvc kgns kl klp; do
     out=$(complete -p "$c" 2>/dev/null) && echo "  $out" || echo "  $c: NONE"
   done
+  echo
+  echo "== kubectl __complete sanity (cluster reachability) =="
+  echo "  context: $(kubectl config current-context 2>/dev/null || echo '?')"
+  local t0=$SECONDS first_lines
+  first_lines=$(kubectl __complete logs "" 2>&1 | head -5)
+  echo "  elapsed: $((SECONDS - t0))s"
+  echo "  __complete output (first 5 lines):"
+  printf '%s\n' "$first_lines" | sed 's/^/    /'
+  echo "  ^ if these are just 'pods/', 'deployments/', ... then kubectl can't"
+  echo "    reach the cluster fast enough and is returning resource-type stubs."
 }
 
 # +--------------+
