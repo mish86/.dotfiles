@@ -30,7 +30,7 @@ C_GIT='\[\e[38;5;176m\]'      # mauve
 C_RESET='\[\e[0m\]'
 
 # kubectl context/namespace indicator.
-# Cached on $KUBECONFIG mtime — kubectl is only spawned when the config
+# Cached on $KUBECONFIG mtime - kubectl is only spawned when the config
 # changes (kctx/kns both rewrite it, so the cache updates on switch).
 # Uses raw \001/\002 wrappers around escapes: bash decodes \[ \] before
 # expanding variables, so embedding \[ \] inside __KUBE_PS1 wouldn't work.

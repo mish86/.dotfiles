@@ -39,7 +39,7 @@ _aws_pick_ec2() {
 #      session that maps localhost:LOCAL_PORT -> <cluster endpoint>:443.
 #
 # LOCAL_PORT defaults to 443. Use a different port (e.g. 6443, 8443) to run
-# parallel sessions against different clusters — each cluster's kubeconfig
+# parallel sessions against different clusters - each cluster's kubeconfig
 # context will point at its own 127.0.0.1:<port>.
 eks-ssm-forward() {
   local region cluster endpoint endpoint_host instance ctx

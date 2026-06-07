@@ -24,7 +24,7 @@ fi
 
 # fzf-aware completion wrapper. Splices alias expansions into COMP_WORDS so
 # __start_kubectl (which only knows the `kubectl` command tree) sees the real
-# command — e.g. `kgp <TAB>` looks like `kubectl get pod <TAB>` to kubectl's
+# command - e.g. `kgp <TAB>` looks like `kubectl get pod <TAB>` to kubectl's
 # completion. Then if >1 match, pipes to fzf; if 0/1, behaves normally.
 _kubectl_fzf_complete() {
   local typed="${COMP_WORDS[0]}"
@@ -32,7 +32,7 @@ _kubectl_fzf_complete() {
   if [[ -n "$expansion" ]]; then
     local -a expanded
     read -ra expanded <<< "$expansion"
-    # Force the first word to "kubectl" — __start_kubectl is hardcoded for it,
+    # Force the first word to "kubectl" - __start_kubectl is hardcoded for it,
     # and BASH_ALIASES[kubectl]=kubecolor would otherwise leak through.
     expanded[0]="kubectl"
     COMP_WORDS=("${expanded[@]}" "${COMP_WORDS[@]:1}")
@@ -45,7 +45,7 @@ _kubectl_fzf_complete() {
   # No --height: fzf uses the alternate screen so the prompt restores cleanly
   # on exit. With --height, readline doesn't repaint the prompt line and you
   # see only the completion text (the line buffer is correct, but the
-  # display lags — pressing Enter still runs the right command).
+  # display lags - pressing Enter still runs the right command).
   choice=$(printf '%s\n' "${COMPREPLY[@]}" \
     | fzf --reverse --select-1 --exit-0 \
           --prompt="${typed}> ")
@@ -61,8 +61,8 @@ _kubectl_fzf_complete() {
 
 # Wire the fzf-aware completion to kubectl, kubecolor, and every alias that
 # expands to one of them. Uses BASH_ALIASES (the live associative array)
-# instead of parsing `alias` output — more robust.
-# Runs at the end of the file, after all `alias k…=…` definitions.
+# instead of parsing `alias` output - more robust.
+# Runs at the end of the file, after all `alias k...=...` definitions.
 __kube_wire_alias_completion() {
   declare -F __start_kubectl >/dev/null 2>&1 || {
     echo "kube.sh: __start_kubectl not defined; kubectl completion not loaded" >&2
