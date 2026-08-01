@@ -70,13 +70,15 @@ _kubectl_fzf_complete() {
 
   if [[ -n "$choice" ]]; then
     local reply="$choice"
-    # For `kl`/`klp` at the pod-name position, auto-append `> <pod>.log`
-    # so selecting a pod yields `kl <pod> > <pod>.log` ready to run.
+    # For `kl`/`klp` (and their --tail/--since variants like kl500, klp5m)
+    # at the pod-name position, auto-append `> <pod>.log` so selecting a pod
+    # yields `kl <pod> > <pod>.log` ready to run. klf* is excluded: -f streams,
+    # so a file redirect is rarely what you want pre-filled.
     # Skip if the user already typed a redirect on the line.
     case "$typed" in
-      kl|klp)
+      kl|klp|kl[0-9]*|klp[0-9]*)
         case "$prev_word" in
-          logs|-p|--previous)
+          logs|-p|--previous|--tail=*|--since=*)
             [[ "$COMP_LINE" != *">"* ]] && reply="$choice > $choice.log"
             ;;
         esac
@@ -495,6 +497,11 @@ alias kgsecy='kubectl get secret -o yaml'
 alias kesec='kubectl edit secret'
 alias kdsec='kubectl delete secret'
 
+# Decode all data fields of a secret. Usage: kgsecd <name> [-n <ns>] [extra kubectl flags]
+kgsecd() {
+  kubectl get secret -o json "$@" | jq '.data | map_values(@base64d)'
+}
+
 # Deployments
 alias kgd='kubectl get deployment'
 alias kgdw='kubectl get deployment -o wide'
@@ -522,6 +529,29 @@ alias kgaa='kubectl get all --all-namespaces'
 alias kl='kubectl logs'
 alias klf='kubectl logs -f'
 alias klp='kubectl logs -p'
+# Tail variants (--tail=N)
+alias kl500='kubectl logs --tail=500'
+alias kl100='kubectl logs --tail=100'
+alias kl0='kubectl logs --tail=0'
+alias klf500='kubectl logs -f --tail=500'
+alias klf100='kubectl logs -f --tail=100'
+alias klf0='kubectl logs -f --tail=0'
+alias klp500='kubectl logs -p --tail=500'
+alias klp100='kubectl logs -p --tail=100'
+alias klp0='kubectl logs -p --tail=0'
+# Since variants (--since=D)
+alias kl5m='kubectl logs --since=5m'
+alias kl15m='kubectl logs --since=15m'
+alias kl30m='kubectl logs --since=30m'
+alias kl1h='kubectl logs --since=1h'
+alias klf5m='kubectl logs -f --since=5m'
+alias klf15m='kubectl logs -f --since=15m'
+alias klf30m='kubectl logs -f --since=30m'
+alias klf1h='kubectl logs -f --since=1h'
+alias klp5m='kubectl logs -p --since=5m'
+alias klp15m='kubectl logs -p --since=15m'
+alias klp30m='kubectl logs -p --since=30m'
+alias klp1h='kubectl logs -p --since=1h'
 
 # File copy
 alias kcp='kubectl cp --retries=5'

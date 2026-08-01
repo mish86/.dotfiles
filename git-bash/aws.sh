@@ -127,3 +127,38 @@ ec2-ssm() {
 
   aws ssm start-session --region "$region" --target "$instance"
 }
+
+# ec2-ssm-forward <host> <remote-port> [local-port]
+#   Pick a running EC2 instance (fzf) and port-forward an arbitrary
+#   destination <host>:<remote-port> through it via SSM, exposed locally on
+#   127.0.0.1:<local-port>. <local-port> defaults to <remote-port>.
+ec2-ssm-forward() {
+  local region instance host remote_port local_port
+  host="$1"
+  remote_port="$2"
+  local_port="${3:-$remote_port}"
+
+  if [[ -z "$host" || -z "$remote_port" ]]; then
+    echo "usage: ec2-ssm-forward <host> <remote-port> [local-port]" >&2
+    return 1
+  fi
+  for p in "$remote_port" "$local_port"; do
+    if ! [[ "$p" =~ ^[0-9]+$ ]] || (( p < 1 || p > 65535 )); then
+      echo "ec2-ssm-forward: invalid port '$p' (1-65535)" >&2
+      return 1
+    fi
+  done
+
+  region=$(_aws_region ec2-ssm-forward) || return 1
+
+  instance=$(_aws_pick_ec2 "$region") || return 1
+  [[ -z "$instance" ]] && { echo "ec2-ssm-forward: no instance selected" >&2; return 1; }
+  echo "ec2-ssm-forward: starting SSM port-forward via $instance (localhost:${local_port} -> ${host}:${remote_port})"
+
+  MSYS_NO_PATHCONV=1 MSYS2_ARG_CONV_EXCL='*' \
+  aws ssm start-session \
+    --region "$region" \
+    --target "$instance" \
+    --document-name AWS-StartPortForwardingSessionToRemoteHost \
+    --parameters "host=${host},portNumber=${remote_port},localPortNumber=${local_port}"
+}

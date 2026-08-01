@@ -852,7 +852,80 @@ alias kgaa='kubectl get all --all-namespaces'
 alias kl='kubectl logs'
 alias klf='kubectl logs -f'
 alias klp='kubectl logs -p'
+# Tail variants (--tail=N)
+alias kl500='kubectl logs --tail=500'
+alias kl100='kubectl logs --tail=100'
+alias kl0='kubectl logs --tail=0'
+alias klf500='kubectl logs -f --tail=500'
+alias klf100='kubectl logs -f --tail=100'
+alias klf0='kubectl logs -f --tail=0'
+alias klp500='kubectl logs -p --tail=500'
+alias klp100='kubectl logs -p --tail=100'
+alias klp0='kubectl logs -p --tail=0'
+# Since variants (--since=D)
+alias kl5m='kubectl logs --since=5m'
+alias kl15m='kubectl logs --since=15m'
+alias kl30m='kubectl logs --since=30m'
+alias kl1h='kubectl logs --since=1h'
+alias klf5m='kubectl logs -f --since=5m'
+alias klf15m='kubectl logs -f --since=15m'
+alias klf30m='kubectl logs -f --since=30m'
+alias klf1h='kubectl logs -f --since=1h'
+alias klp5m='kubectl logs -p --since=5m'
+alias klp15m='kubectl logs -p --since=15m'
+alias klp30m='kubectl logs -p --since=30m'
+alias klp1h='kubectl logs -p --since=1h'
 alias klrg='f(){ kubectl get pods 2> /dev/null | rg "$@" | awk '\''{print $1}'\'' | xargs -I {} sh -c '\''kubectl logs {} > {}.log'\'';  unset -f f; }; f'
+
+# Tab widget: fzf pod picker for the log aliases, mirroring git-bash/kube.sh
+# __fzf_tab. At the pod-name position of kl/klp/klf (and their --tail/--since
+# variants like kl500, klp5m), Tab opens fzf over pods. For non-follow aliases
+# (kl*/klp*) the selection is inserted as `<pod> > <pod>.log` ready to run;
+# klf* is excluded from the redirect since -f streams. Anything else falls
+# through to whatever widget Tab was bound to before this file loaded
+# (fzf-completion when fzf.sh is sourced first).
+_kube_logs_fzf_tab() {
+  local -a words
+  words=(${(z)LBUFFER})
+  local first=${words[1]:-}
+
+  # Pod name is the first argument of these aliases.
+  local cur="" pos=$#words
+  if [[ -n $LBUFFER && $LBUFFER != *[[:space:]] ]]; then
+    cur=${words[-1]}
+  else
+    (( pos++ ))
+  fi
+
+  if [[ $first == (kl|klp|klf)(|[0-9]*) ]] && (( pos == 2 )); then
+    local pod
+    pod=$(kubectl get pods --no-headers 2>/dev/null | awk '{print $1}' \
+      | fzf --reverse --select-1 --exit-0 --query="$cur" --prompt="${first}> ")
+    if [[ -n $pod ]]; then
+      LBUFFER="${LBUFFER%"$cur"}$pod"
+      if [[ $first != klf* && $BUFFER != *'>'* ]]; then
+        LBUFFER+=" > $pod.log"
+      else
+        LBUFFER+=" "
+      fi
+    fi
+    zle reset-prompt
+    return
+  fi
+
+  zle "$_kube_logs_fzf_tab_fallback"
+}
+
+# Capture the widget Tab is currently bound to so non-log commands keep their
+# existing completion behavior. Captured once — on re-source the previous
+# value is kept so the widget never chains to itself.
+if [[ -z ${_kube_logs_fzf_tab_fallback:-} ]]; then
+  _kube_logs_fzf_tab_fallback="${${(z)$(bindkey '^I')}[2]:-expand-or-complete}"
+  [[ $_kube_logs_fzf_tab_fallback == _kube_logs_fzf_tab ]] \
+    && _kube_logs_fzf_tab_fallback=expand-or-complete
+fi
+zle -N _kube_logs_fzf_tab
+bindkey '^I' _kube_logs_fzf_tab
 alias kll='f(){ kubectl get pods --no-headers -l "$@" 2> /dev/null | awk '\''{print $1}'\'' | xargs -I {} sh -c '\''kubectl logs {} > {}.log'\'';  unset -f f; }; f'
 
 # File copy

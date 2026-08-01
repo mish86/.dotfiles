@@ -24,6 +24,35 @@ fi
 alias cp='cp -iv'
 alias mv='mv -iv'
 alias rm='rm -iv'
+# https://gist.github.com/espaciomore/28e24ce4f91177c0964f4f67bb5c5fda
+watch() {
+  local interval=1 # Standardintervall
+  local command_to_run=""
+
+  # Einfache Argumenten-Analyse
+  if [[ "$1" == "-n" && "$2" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+    interval="$2"
+    shift 2 # Entfernt -n und die Zahl von den Argumenten
+  fi
+
+  command_to_run="${@}"
+
+  if [ -z "$command_to_run" ]; then
+    echo "Usage: watch [-n <seconds>] <command>"
+    return 1
+  fi
+
+  clear
+  while true; do
+    # Führe den Befehl aus und speichere Ausgabe und Fehler
+    OUTPUT="$( eval "$command_to_run" 2>&1)"
+    clear
+    echo -e "Every ${interval}s: $command_to_run"
+    echo ""
+    echo -e "${OUTPUT}"
+    sleep "$interval"
+  done
+}
 
 # +-----+
 # | zip |

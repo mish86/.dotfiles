@@ -33,6 +33,10 @@ shift-enter-newline() { LBUFFER+=$'\n'; }
 zle -N shift-enter-newline
 bindkey '\e[13;2u' shift-enter-newline
 
+# Undo / redo of prompt edits
+bindkey '^[u' undo
+bindkey '^[r' redo
+
 # Up/Down: navigate lines in multi-line input, prefix history search otherwise
 autoload -U up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
