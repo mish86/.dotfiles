@@ -1,10 +1,19 @@
 # ~/.bashrc - Git Bash on Windows
 
+export PATH="$PATH:$LOCALAPPDATA/Programs/Go/bin"
+export PATH="$PATH:$LOCALAPPDATA/Programs/minio"
+
 # aws cli and ssm plugin manually installed with no admin privileges
 export PATH="$PATH:$LOCALAPPDATA/Amazon/AWSCLIV2"
 export PATH="$PATH:$LOCALAPPDATA/Amazon/SessionManagerPlugin"
-# unknown CA certificate
-alias aws='aws --no-verify-ssl 2>/dev/null '
+# skip verify self-signed certificate and ignore pythong warnings
+# alias aws='aws --no-verify-ssl 2>/dev/null '
+alias aws='aws --no-verify-ssl '
+# skip verify self-signed ceritifcate for aws configure sso
+export AWS_CA_BUNDLE=""
+
+# Default test-bed profile
+export AWS_PROFILE=ATLAS_EXPLOITANT-248189928759
 
 # Only run for interactive shells
 case $- in
@@ -35,8 +44,8 @@ command -v yazi &>/dev/null && source "$BASH_CFG/yazi.sh"
 # Prompt - load before zoxide so zoxide's PROMPT_COMMAND hook ends up last.
 # starship.sh is the active prompt; prompt.sh is the legacy hand-rolled
 # __git_ps1 + __kube_ps1 fallback, kept for reference.
-command -v starship &>/dev/null && source "$BASH_CFG/starship.sh"
-# source "$BASH_CFG/prompt.sh"
+#command -v starship &>/dev/null && source "$BASH_CFG/starship.sh"
+#source "$BASH_CFG/prompt.sh"
 
 # zoxide must be initialized AFTER anything else that touches PROMPT_COMMAND
 # (starship, kube.sh, ...) so its dir-tracking hook fires last. Otherwise

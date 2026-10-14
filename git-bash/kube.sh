@@ -444,7 +444,8 @@ alias kdj='kubectl delete jobs'
 # Pods by label / IPs
 alias kgpl='kubectl get pod -l'
 alias kgplw='kubectl get pod -o wide -l'
-alias kgpip='kubectl get pod -A --no-headers -o custom-columns=":metadata.namespace,:metadata.name,:status.podIP" | sort -k3'
+alias kgpip='kubectl get pod --no-headers -o custom-columns=":metadata.namespace,:metadata.name,:status.podIP" | sort -k3'
+alias kgpage='kubectl get pod --sort-by=.metadata.creationTimestamp'
 
 # Events
 alias kge='kubectl get events --sort-by=.lastTimestamp'
@@ -510,6 +511,9 @@ alias kgdy='kubectl get deployment -o yaml'
 alias ked='kubectl edit deployment'
 alias kdd='kubectl delete deployment'
 alias ksd='kubectl scale deployment'
+alias ksdown='kubectl scale deployment --replicas=0'
+alias ksup1='kubectl scale deployment --replicas=1'
+alias ksup2='kubectl scale deployment --replicas=2'
 alias krsd='kubectl rollout status deployment'
 alias krrd='kubectl rollout restart deployment'
 
